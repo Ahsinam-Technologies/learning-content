@@ -55,11 +55,11 @@ The modular design allows adding further instructional formats seamlessly:
 
 | Learning Modality | Platform Term | Scope & Role | Course Directory Subfolder |
 | :--- | :--- | :--- | :--- |
-| **In-Class Material** | **`session`** | Coherent lecture or seminar meeting block | `courses/<Course>/decks/session-XX-*/` |
-| **In-Class Unit** | **`topic`** | Focused presentation unit / micro-agenda | `courses/<Course>/decks/.../topics/` |
-| **Reading Material** | **`chapter`** | Comprehensive narrative exposition book unit | `courses/<Course>/notes/chapter-XX-*/` |
-| **Reading Unit** | **`section`** | In-depth prose section with definitions & derivations | `courses/<Course>/notes/.../sections/` |
-| **Self-Paced Video** | **`video-session`** | Narrated & animated computational video lesson | `courses/<Course>/videos/session-XX-*/` |
+| **In-Class Material** | **`session`** | Coherent lecture or seminar meeting block | `courses/<course-slug>/decks/session-XX-*/` |
+| **In-Class Unit** | **`topic`** | Focused presentation unit / micro-agenda | `courses/<course-slug>/decks/.../topics/` |
+| **Reading Material** | **`chapter`** | Comprehensive narrative exposition book unit | `courses/<course-slug>/notes/chapter-XX-*/` |
+| **Reading Unit** | **`section`** | In-depth prose section with definitions & derivations | `courses/<course-slug>/notes/.../sections/` |
+| **Self-Paced Video** | **`video-session`** | Narrated & animated computational video lesson | `courses/<course-slug>/videos/session-XX-*/` |
 
 ---
 
@@ -90,10 +90,10 @@ make sample-videos
 make sample
 
 # 2. Assembled Course Materials
-make course COURSE="CS 101 - Introduction to Computational Thinking"
-make decks  COURSE="CS 101 - Introduction to Computational Thinking"
-make notes  COURSE="CS 101 - Introduction to Computational Thinking"
-make videos COURSE="CS 101 - Introduction to Computational Thinking"
+make course COURSE="cs-101-introduction-to-computational-thinking"
+make decks  COURSE="cs-101-introduction-to-computational-thinking"
+make notes  COURSE="cs-101-introduction-to-computational-thinking"
+make videos COURSE="cs-101-introduction-to-computational-thinking"
 
 # 3. Validation
 make scaffold-check

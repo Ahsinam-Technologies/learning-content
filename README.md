@@ -37,7 +37,7 @@ learning-content/
 │   ├── Makefile                                # Main build engine
 │   └── README.md                               # Infrastructure documentation
 ├── courses/                                    # 183 CONTENT & GENERATOR COURSE FOLDERS
-│   ├── CS 101 - Introduction to Computational Thinking/
+│   ├── cs-101-introduction-to-computational-thinking/
 │   │   ├── decks/                              # In-class lecture materials
 │   │   │   └── session-01-name/
 │   │   │       ├── session-01-name-content.tex
@@ -59,7 +59,7 @@ learning-content/
 │   │   ├── decks/sample-decks.pdf
 │   │   ├── notes/sample-notes.pdf
 │   │   └── videos/
-│   └── courses/<Course Name>/
+│   └── courses/<course-slug>/
 │       ├── decks/
 │       │   ├── <Course Name> - Slides.pdf
 │       │   └── session-XX-<name>.pdf
@@ -77,11 +77,11 @@ learning-content/
 
 | Learning Modality | Platform Term | Scope & Role | Course Directory Subfolder |
 | :--- | :--- | :--- | :--- |
-| **In-Class Material** | **`session`** | Coherent lecture or seminar meeting block | `courses/<Course>/decks/session-XX-*/` |
-| **In-Class Unit** | **`topic`** | Focused presentation unit / micro-agenda | `courses/<Course>/decks/.../topics/` |
-| **Reading Material** | **`chapter`** | Comprehensive narrative exposition book unit | `courses/<Course>/notes/chapter-XX-*/` |
-| **Reading Unit** | **`section`** | In-depth prose section with definitions & derivations | `courses/<Course>/notes/.../sections/` |
-| **Self-Paced Video** | **`video-session`** | Narrated & animated computational video lesson | `courses/<Course>/videos/session-XX-*/` |
+| **In-Class Material** | **`session`** | Coherent lecture or seminar meeting block | `courses/<course-slug>/decks/session-XX-*/` |
+| **In-Class Unit** | **`topic`** | Focused presentation unit / micro-agenda | `courses/<course-slug>/decks/.../topics/` |
+| **Reading Material** | **`chapter`** | Comprehensive narrative exposition book unit | `courses/<course-slug>/notes/chapter-XX-*/` |
+| **Reading Unit** | **`section`** | In-depth prose section with definitions & derivations | `courses/<course-slug>/notes/.../sections/` |
+| **Self-Paced Video** | **`video-session`** | Narrated & animated computational video lesson | `courses/<course-slug>/videos/session-XX-*/` |
 
 ---
 
@@ -97,16 +97,16 @@ make sample-videos                                                       # Refer
 make sample                                                              # All reference samples
 
 # 2. Build Assembled Course Materials
-make course COURSE="CS 101 - Introduction to Computational Thinking"     # Slides, Notes, and Videos
-make decks  COURSE="CS 101 - Introduction to Computational Thinking"     # Assembles slides only
-make notes  COURSE="CS 101 - Introduction to Computational Thinking"     # Assembles reading book only
-make videos COURSE="CS 101 - Introduction to Computational Thinking"     # Plans/builds course videos
+make course COURSE="cs-101-introduction-to-computational-thinking"       # Slides, Notes, and Videos
+make decks  COURSE="cs-101-introduction-to-computational-thinking"       # Assembles slides only
+make notes  COURSE="cs-101-introduction-to-computational-thinking"       # Assembles reading book only
+make videos COURSE="cs-101-introduction-to-computational-thinking"       # Plans/builds course videos
 
 # 3. Build Standalone Units
-make session SESSION="CS 101 - Introduction to Computational Thinking/decks/session-01-course-orientation"
-make chapter CHAPTER="CS 101 - Introduction to Computational Thinking/notes/chapter-01-course-orientation"
-make topic   TOPIC="CS 101 - Introduction to Computational Thinking/decks/session-01-course-orientation/topics/topic-01-course-orientation-content.tex"
-make section SECTION="CS 101 - Introduction to Computational Thinking/notes/chapter-01-course-orientation/sections/section-01-course-orientation-content.tex"
+make session SESSION="cs-101-introduction-to-computational-thinking/decks/session-01-course-orientation"
+make chapter CHAPTER="cs-101-introduction-to-computational-thinking/notes/chapter-01-course-orientation"
+make topic   TOPIC="cs-101-introduction-to-computational-thinking/decks/session-01-course-orientation/topics/topic-01-course-orientation-content.tex"
+make section SECTION="cs-101-introduction-to-computational-thinking/notes/chapter-01-course-orientation/sections/section-01-course-orientation-content.tex"
 
 # 4. Verification and Integrity Check
 make scaffold-check                                                      # Checks all 183 courses in courses/ (decks, notes, videos)

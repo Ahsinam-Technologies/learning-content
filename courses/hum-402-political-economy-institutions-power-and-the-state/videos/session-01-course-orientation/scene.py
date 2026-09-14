@@ -1,6 +1,6 @@
 """
 Manim Scene Script for BayesStack Video Generation.
-Course: HUM 402 - Political Economy - Institutions, Power & the State. | Session 01: Course Orientation
+Course: HUM 402 - Political Economy - Institutions, Power & the State | Session 01: Course Orientation
 """
 import sys
 import os
@@ -32,7 +32,7 @@ class SessionScene(BayesStackScene):
         title = self.create_title("HUM 402: Session 01", "Course Orientation")
         card1 = self.create_card(
             title="Overview & Motivation",
-            content="Course: Political Economy - Institutions, Power & the State.\n\nSession Goal: Establish fundamental definitions & invariants.",
+            content="Course: Political Economy - Institutions, Power & the State\n\nSession Goal: Establish fundamental definitions & invariants.",
             width=10.0, height=3.5
         )
         if title and card1:

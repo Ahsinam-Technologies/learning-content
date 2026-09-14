@@ -24,12 +24,41 @@ def escape_latex(s):
         res = re.sub(r'(?<!\\)' + re.escape(orig), rep, res)
     return res
 
-def parse_course_info(course_str):
+def parse_course_info(course_str, course_dir=None):
+    """
+    Extracts course code and human-readable course name.
+    Prioritizes reading the canonical academic title from README.md in the course directory.
+    Falls back to parsing 'CODE - Title' or kebab-case slug formats.
+    """
+    if course_dir and os.path.isdir(course_dir):
+        readme_path = os.path.join(course_dir, "README.md")
+        if os.path.exists(readme_path):
+            try:
+                with open(readme_path, "r", encoding="utf-8") as f:
+                    first_line = f.readline().strip()
+                m = re.match(r"^#\s+([A-Za-z0-9\s]+?)\s*[—–-]\s*(.*)$", first_line)
+                if m:
+                    code = m.group(1).strip()
+                    name = m.group(2).strip().rstrip(".")
+                    return code, name
+            except Exception:
+                pass
+
     clean_str = os.path.basename(course_str)
-    parts = clean_str.split(" - ", 1)
-    code = parts[0].strip()
-    name = parts[1].strip() if len(parts) > 1 else clean_str
-    return code, name
+    if " - " in clean_str:
+        parts = clean_str.split(" - ", 1)
+        code = parts[0].strip()
+        name = parts[1].strip().rstrip(".") if len(parts) > 1 else clean_str
+        return code, name
+
+    m = re.match(r"^([a-zA-Z]+)-(\d+)-(.*)$", clean_str)
+    if m:
+        code = f"{m.group(1).upper()} {m.group(2)}"
+        slug_title = m.group(3).replace("-and-", " and ").replace("-", " ")
+        name = slug_title.title()
+        return code, name
+
+    return clean_str, clean_str
 
 def resolve_course_dir(root, course):
     """Resolves full course directory path and clean course name."""
@@ -51,7 +80,7 @@ def render_decks_wrapper(root, course, build_dir, science=False):
     if not os.path.exists(decks_dir):
         raise FileNotFoundError(f"Decks folder not found: {decks_dir}")
         
-    code, name = parse_course_info(clean_course_name)
+    code, name = parse_course_info(clean_course_name, c_dir)
     esc_code = escape_latex(code)
     esc_name = escape_latex(name)
     
@@ -119,7 +148,7 @@ def render_notes_wrapper(root, course, build_dir, science=False):
     if not os.path.exists(notes_dir):
         raise FileNotFoundError(f"Notes folder not found: {notes_dir}")
         
-    code, name = parse_course_info(clean_course_name)
+    code, name = parse_course_info(clean_course_name, c_dir)
     esc_code = escape_latex(code)
     esc_name = escape_latex(name)
     
@@ -207,7 +236,7 @@ def render_unit_wrapper(mode, root, unit_path, build_dir, science=False):
         course_path = os.path.dirname(os.path.dirname(content_path))
 
     clean_course_name = os.path.basename(course_path)
-    code, name = parse_course_info(clean_course_name)
+    code, name = parse_course_info(clean_course_name, course_path)
     esc_code = escape_latex(code)
     esc_name = escape_latex(name)
     sci_opt = "[science]" if science else ""

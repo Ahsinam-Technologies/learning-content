@@ -1,4 +1,4 @@
-# BayesStack Video Narration: Political Economy - Institutions, Power & the State.
+# BayesStack Video Narration: Political Economy - Institutions, Power & the State
 title: "HUM 402 - Session 01: Course Orientation"
 course_code: "HUM 402"
 session: "01"
@@ -13,7 +13,7 @@ scenes:
     title: "Course Orientation: Core Principles"
     visual: "animate_title_card"
     narration: >
-      Welcome to Course Orientation in Political Economy - Institutions, Power & the State.. In this session, we establish the core theoretical
+      Welcome to Course Orientation in Political Economy - Institutions, Power & the State. In this session, we establish the core theoretical
       framework and examine foundational principles governing this topic.
 
   - id: "scene_02_formal_derivation"
