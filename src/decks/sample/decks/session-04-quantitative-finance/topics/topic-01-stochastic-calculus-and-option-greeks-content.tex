@@ -1,0 +1,42 @@
+\TopicDivider{01}{Stochastic Calculus \& Continuous-Time Derivatives}{Geometric Brownian Motion, Itô's Lemma, and the Black-Scholes-Merton PDE.}
+
+\begin{frame}{Asset Price Dynamics: Geometric Brownian Motion}
+  \MathDerivationStep{1}{Continuous SDE}{d S_t = \mu S_t \, dt + \sigma S_t \, dW_t}{%
+    Asset prices follow continuous diffusion where \(W_t\) is a standard Wiener process satisfying \(\mathbb{E}[dW_t] = 0\) and \(\text{Var}(dW_t) = dt\).
+  }
+  \vspace{.12cm}
+  \MathDerivationStep{2}{It\^{o}'s Chain Rule}{df(t, S_t) = \left( \frac{\partial f}{\partial t} + \mu S_t \frac{\partial f}{\partial S} + \frac{1}{2}\sigma^2 S_t^2 \frac{\partial^2 f}{\partial S^2} \right) dt + \sigma S_t \frac{\partial f}{\partial S} \, dW_t}{%
+    Because \((dW_t)^2 = dt\) deterministically under quadratic variation, classical Taylor series truncation fails, introducing the non-zero second-order drift correction.
+  }
+\end{frame}
+
+\begin{frame}{The Black-Scholes-Merton Arbitrage-Free PDE}
+  \QuantPayoffCard{Black-Scholes-Merton PDE}{%
+    \frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + r S \frac{\partial V}{\partial S} - r V = 0
+  }{%
+    \textbf{Option Greeks:}\par\vspace{.15em}
+    \begin{itemize}\setlength{\itemsep}{.1em}\scriptsize
+      \item \textbf{Delta} \(\Delta = \frac{\partial V}{\partial S} = \Phi(d_1) \in [0, 1]\)
+      \item \textbf{Gamma} \(\Gamma = \frac{\partial^2 V}{\partial S^2} = \frac{\phi(d_1)}{S \sigma \sqrt{T}} > 0\)
+      \item \textbf{Vega} \(\mathcal{V} = \frac{\partial V}{\partial \sigma} = S \sqrt{T} \phi(d_1)\)
+    \end{itemize}
+  }{%
+    Self-financing replicating portfolio \((V - \Delta S)\) eliminates Brownian Wiener noise \(dW_t\), yielding deterministic risk-free returns \(r\).
+  }
+  \vspace{.15cm}
+  \TakeawayBanner{Arbitrage-free pricing removes expected return \(\mu\); derivative value is strictly governed by volatility \(\sigma\).}
+\end{frame}
+
+\begin{frame}{Option Greeks \& Delta-Neutral Hedging}
+  \StatGridThree{%
+    \StatCard{$\Delta$}{Hedge Ratio}{First-Order Exposure}{\(d\Pi = (V - \Delta S) \implies\) neutral}%
+  }{%
+    \StatCard{$\Gamma$}{Convexity}{Rebalancing Speed}{Peak at-the-money near expiry}%
+  }{%
+    \StatCard{$\mathcal{V}$}{Volatility}{Vega Sensitivity}{Derivative acts as pure vol asset}%
+  }
+  \vspace{.15cm}
+  \begin{ConceptCard}[DYNAMIC HEDGING]{The Gamma-Theta Trade-off}
+    A delta-neutral book earns theta (time decay) in exchange for carrying negative gamma risk when underlying spot prices gap abruptly.
+  \end{ConceptCard}
+\end{frame}

@@ -3,16 +3,25 @@
 \documentclass[aspectratio=169,10pt]{beamer}
 \usepackage{import}
 \usepackage[science]{bayesstackslides}
-\CourseMetadata{SAMPLE 101}{Bayesian reasoning for data science}{In-class slide decks}
-\author{BayesStack}
+\CourseMetadata{SAMPLE 101}{Enterprise Multi-Domain Masterclass Platform}{Executive \& Technical Slide Deck}
+\author{BayesStack Academic Editorial Board}
 \date{}
 
 \begin{document}
-\BayesCourseTitleSlide{Bayesian reasoning for data science}{Reference deck for the shared slide platform}
+\BayesCourseTitleSlide{Enterprise Multi-Domain Learning Platform}{State-of-the-Art Technical Deck System for Math, CS, SWE, ML \& Quant Finance}
+
 \CourseSessionMapSlide{
-  \SessionEntry{01}{Bayesian inference}{Represent a belief, observe evidence and update coherently.}
-  \SessionEntry{02}{Decision-making}{Use posterior uncertainty to choose an action deliberately.}
+  \SessionEntry{01}{Bayesian Inference \& Epistemic Reasoning}{First-principles probability axioms, marginal likelihoods, conjugacy, and decision theory.}
+  \SessionEntry{02}{Systems Computing \& Hardware Architecture}{Memory hierarchies, L1/L2/L3 SRAM latency, cache-line layouts, and CPU profiling.}
+  \SessionEntry{03}{Software Engineering \& Distributed Protocols}{Concurrency invariants, lock-free atomic CAS primitives, and Raft consensus safety.}
+  \SessionEntry{04}{Quantitative Finance \& Stochastic Calculus}{Geometric Brownian Motion SDEs, Itô's chain rule, Black-Scholes PDE, and option Greeks.}
+  \SessionEntry{05}{Frontier Machine Learning \& Neural Systems}{Scaled Dot-Product Attention, Transformer blocks, KV cache scaling, and vLLM benchmarks.}
 }
+
 \import{decks/session-01-bayesian-inference/}{session-01-bayesian-inference-content.tex}
-\import{decks/session-02-decision-making/}{session-02-decision-making-content.tex}
+\import{decks/session-02-systems-computing/}{session-02-systems-computing-content.tex}
+\import{decks/session-03-software-engineering/}{session-03-software-engineering-content.tex}
+\import{decks/session-04-quantitative-finance/}{session-04-quantitative-finance-content.tex}
+\import{decks/session-05-machine-learning/}{session-05-machine-learning-content.tex}
+
 \end{document}

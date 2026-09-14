@@ -1,0 +1,62 @@
+\TopicDivider{01}{Concurrency Invariants \& Consensus Protocols}{From low-level lock-free atomics to fault-tolerant distributed linearizable logs.}
+
+\begin{frame}{Concurrency: Mutex Contention vs Lock-Free CAS}
+  \CompareGrid{OS Mutex Locks (Pthreads / std::mutex)}{%
+    \begin{itemize}\setlength{\itemsep}{.25em}
+      \item \textbf{Mechanism}: Acquires exclusive lock; contended threads yield CPU to the OS scheduler.
+      \item \textbf{Failure Mode}: Context-switch penalties (1--3\,\(\mu\)s), priority inversion, convoying.
+      \item \textbf{Use Case}: Long-duration critical sections with I/O.
+    \end{itemize}
+    \PillBadge[BayesAmber]{PTHREAD BLOCKING}
+  }{Lock-Free Atomics (CAS Primitives)}{%
+    \begin{itemize}\setlength{\itemsep}{.25em}
+      \item \textbf{Mechanism}: Atomic hardware instructions (\texttt{CMPXCHG16B}) retry without OS kernel context switches.
+      \item \textbf{Property}: System-wide progress guaranteed (wait-free / lock-free bounds).
+      \item \textbf{Use Case}: Ultra-low-latency queues, ring buffers, atomic counters.
+    \end{itemize}
+    \PillBadge[BayesEmerald]{HARDWARE NATIVE}
+  }
+\end{frame}
+
+\begin{frame}{Synchronization Latency Benchmark}
+  \StatGridThree{%
+    \StatCard{12 ns}{Atomic CAS Latency}{Single Core Execution}{Hardware compare-and-swap loop}%
+  }{%
+    \StatCard{1,450 ns}{Contended Mutex Lock}{Kernel Context Switch}{Thread sleep and OS rescheduling}%
+  }{%
+    \StatCard{120x}{Throughput Speedup}{Lock-Free Ring Buffer}{Zero syscalls in fast-path}%
+  }
+  \vspace{.15cm}
+  \TakeawayBanner{Eliminating OS kernel transitions on the hot path yields orders-of-magnitude lower tail latency.}
+\end{frame}
+
+\begin{frame}{Distributed Invariant: Raft Consensus Engine}
+  \ArchitectureCard{Quorum Consensus State Machine}{%
+    \begin{tikzpicture}[node distance=1.0cm, every node/.style={font=\scriptsize\bfseries}]
+      \node[bayes/data, fill=BayesPale] (client) {Client Request};
+      \node[bayes/model, fill=BayesTeal, text=white, right=0.8cm of client] (leader) {Raft Leader\\Term: \(T_{12}\)};
+      \node[bayes/node, above right=0.3cm and 0.8cm of leader] (f1) {Follower 1\\Quorum Node};
+      \node[bayes/node, below right=0.3cm and 0.8cm of leader] (f2) {Follower 2\\Quorum Node};
+      \node[bayes/node, right=3.0cm of leader] (commit) {State Machine\\Linearizable Log};
+
+      \draw[bayes/flow] (client) -- (leader);
+      \draw[bayes/flow] (leader) -- node[above, sloped]{\tiny AppendEntries} (f1);
+      \draw[bayes/flow] (leader) -- node[below, sloped]{\tiny AppendEntries} (f2);
+      \draw[bayes/flow, dashed] (f1) -- node[above, sloped]{\tiny Ack} (commit);
+      \draw[bayes/flow, dashed] (f2) -- node[below, sloped]{\tiny Ack} (commit);
+      \draw[bayes/flow] (leader) -- node[above]{\tiny Commit} (commit);
+    \end{tikzpicture}
+  }{Leader commits entry to local log once acknowledged by a strict majority (\(\lfloor N/2 \rfloor + 1\)) of nodes.}
+\end{frame}
+
+\begin{frame}{Raft Safety Invariants}
+  \AlgorithmCard{Raft Safety Invariants}{O(1) Append, Quorum Verify}{
+    \textbf{1. Election Safety:} At most one leader elected per term. \par\vspace{.3em}
+    \textbf{2. Leader Append-Only:} Leaders never overwrite logs. \par\vspace{.3em}
+    \textbf{3. Log Matching:} If two logs contain identical index/term, all preceding entries match identically.
+  }
+  \vspace{.15cm}
+  \begin{InsightCard}{Linearizable Consistency}
+    By requiring quorums to overlap on at least one common node containing the highest term, split-brain partition anomalies are mathematically prohibited.
+  \end{InsightCard}
+\end{frame}
