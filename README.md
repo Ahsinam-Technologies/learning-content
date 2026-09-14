@@ -25,7 +25,7 @@ learning-content/
 │   ├── decks/                                  # In-class slide deck engine
 │   │   ├── theme/                              # bayesstackslides.sty (Beamer presentation package)
 │   │   ├── templates/                          # Session, topic, and course deck templates
-│   │   └── sample/                             # Reference visual test deck (sample-decks.tex)
+│   │   └── sample/                             # Reference visual test deck (gallery-deck.tex)
 │   ├── notes/                                  # Reading material / book publishing engine
 │   │   ├── theme/                              # bayesstacknotes.sty (Two-column publication book package)
 │   │   ├── templates/                          # Chapter, section, and course book templates
@@ -56,7 +56,7 @@ learning-content/
 ├── .creds/                                     # Local credentials (ignored by git)
 ├── build/                                      # Hierarchical build deliverables
 │   ├── sample/
-│   │   ├── decks/sample-decks.pdf
+│   │   ├── decks/gallery-deck.pdf
 │   │   ├── notes/sample-notes.pdf
 │   │   └── videos/
 │   └── courses/<course-slug>/
@@ -91,7 +91,7 @@ Run from either the repository root or within `src/`:
 
 ```bash
 # 1. Build Reference Samples
-make sample-decks                                                        # Reference slide deck
+make gallery-deck                                                        # Reference masterclass slide deck (30 Editorial Compositions)
 make sample-notes                                                        # Reference publication book
 make sample-videos                                                       # Reference video pipeline
 make sample                                                              # All reference samples

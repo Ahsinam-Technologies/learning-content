@@ -27,14 +27,14 @@ TEXINPUTS=../../theme:../../../notes/theme:../../core/fonts:../../core/assets:..
 
 Expected output: `gallery-deck.pdf` (approximately 40–45 slides).
 
-### Reference sample deck
+### Reference sample deck (Gallery 2.0)
 
 ```bash
 cd src
-make sample-decks
+make gallery-deck
 ```
 
-Expected output: `build/sample/decks/sample-decks.pdf`.
+Expected output: `build/sample/decks/gallery-deck.pdf`.
 
 ### Reference notes (confirm no regression)
 
@@ -182,9 +182,9 @@ All geometry constants are in `src/decks/theme/bayesstackgeometry.sty`. Edit the
 | `\BayesHeaderHeight` | 11.5 mm | Content consistently starts too high (decrease) or overlaps frametitle (increase) |
 | `\BayesFooterHeight` | 5.6 mm | Content overlaps footline (increase) or too much gap above footline (decrease) |
 | `\BayesSafeMarginH` | 7.8 mm | Left/right chrome collision (adjust to match `\setbeamersize` value) |
-| `\BayesGap` | 0.15 cm | All slides too tight (increase) or too spacious (decrease) |
-| `\BayesSmallGap` | 0.08 cm | Tight gaps look incorrect |
-| `\BayesBigGap` | 0.28 cm | Large gaps look incorrect |
+| `\BayesGap` | 0.18 cm | All slides too tight (increase) or too spacious (decrease) |
+| `\BayesSmallGap` | 0.10 cm | Tight gaps look incorrect |
+| `\BayesBigGap` | 0.32 cm | Large gaps look incorrect |
 
 `BayesContentHeight` and `BayesContentWidth` are derived automatically in `\AtBeginDocument` — do not set them directly.
 
@@ -206,7 +206,22 @@ Numerical tuning after the first render is expected and normal. Architectural de
 
 ---
 
-## 8. Notes system regression check
+## 8. Gallery 3.0 projection QA pass
+
+After every gallery change, render the full deck and inspect these representative risk cases at 100\% zoom:
+
+- title slide: course-code pill and series line have visibly separate vertical lanes;
+- standard chrome: title sits close to, but not on, its dividing rule; footer reads `current / total`;
+- derivations: headings, equations, and interpretation text use the same named spacing sequence;
+- diagrams: node bounding boxes and connectors do not overlap after font substitution;
+- long equations and canvas statements: a bounded panel or text width keeps content inside the safe margin;
+- tables and provenance labels: no right-edge clipping; compress metadata rather than shrinking the slide typography.
+
+Treat any `Overfull \\hbox` or `Overfull \\vbox` in a changed gallery slide as a release blocker unless it is investigated and explicitly accepted.
+
+---
+
+## 9. Notes system regression check
 
 After validating the gallery, confirm the notes system is unaffected:
 

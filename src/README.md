@@ -21,7 +21,7 @@ src/
 ├── decks/                      # In-Class Slide Deck Infrastructure
 │   ├── theme/                  # bayesstackslides.sty (Beamer presentation package)
 │   ├── templates/              # session, topic, and course deck templates
-│   └── sample/                 # Reference visual sample deck (sample-decks.tex)
+│   └── sample/                 # Reference visual sample deck (gallery-deck.tex)
 │
 ├── notes/                      # Reading Notes & Publication Book Infrastructure
 │   ├── theme/                  # bayesstacknotes.sty (Two-column publication book package)
@@ -84,7 +84,7 @@ From the workspace root or `src/`:
 
 ```bash
 # 1. Reference Samples
-make sample-decks
+make gallery-deck
 make sample-notes
 make sample-videos
 make sample

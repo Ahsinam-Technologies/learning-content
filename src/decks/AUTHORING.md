@@ -44,7 +44,7 @@ Keep frametitles under 80 characters. The accent rule below the title truncates 
 | `StatGridTwo/Three/Four` | 2–4 metric tiles in a row | — |
 | `CompareGrid` | Two-column trade-off comparison | Blue vs teal |
 | `TwoPane` | General two-column layout | — |
-| `TakeawayBanner` | Full-width dark punchline | Dark/teal |
+| `TakeawayBanner` | Full-width dark academic conclusion | Dark/teal |
 | `TerminalWindow` | Terminal/CLI output | Dark terminal |
 | `CodeBlock` | Syntax-highlighted code | Teal code theme |
 | `ArchitectureCard` | System diagram container | Teal (ARCHITECTURE) |
@@ -210,3 +210,13 @@ Do not shrink font sizes as a fix — that reduces readability for the audience.
 - **Do not** use absolute TikZ coordinates (`\node at (3.2, 1.7)`) for ordinary content — use tcolorbox components.
 - **Do not** use `\textwidth` arithmetic for column widths manually — use `\TwoPane`, `\FigureExplain`, or `\ExplainFigure`.
 - **Do not** add TikZ `remember picture, overlay` inside a content component that will be reused — it will break standalone compilation.
+- **Do not** use promotional labels such as “PUNCHLINE”; state the conclusion directly in academic prose.
+- **Do not** use a bare display equation or long line against a column/page edge. Use `SafeContentPanel` (or a bounded canvas node) so the inset survives font substitution and projection.
+
+---
+
+## Projection and render QA
+
+For lecture slides, prefer `\small` or larger for explanatory prose and `\footnotesize` or larger for qualifications. If a three-column comparison becomes unreadable at that size, split it rather than shrinking it.
+
+Before release, render the PDF and inspect the title page, the longest frametitle, all equations, diagrams, tables, and canvas-mode slides at 100\%. Confirm that page numbers display as `current / total`, adjacent blocks use named gap tokens, and no text or connector reaches the safe edge.

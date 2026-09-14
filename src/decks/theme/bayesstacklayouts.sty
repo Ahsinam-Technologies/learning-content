@@ -1,29 +1,26 @@
-% bayesstacklayouts.sty — Author-facing slide layout helpers.
+% bayesstacklayouts.sty — Academic Editorial Composition Primitives (BayesStack 2.0).
 % Loaded by bayesstackslides.sty; do not load directly.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{bayesstacklayouts}[2026/09/14 BayesStack slide layout helpers]
+\ProvidesPackage{bayesstacklayouts}[2026/09/14 BayesStack academic editorial layout helpers]
 
 % -------------------------------------------------------------------------
-% Figure + Explanation Layouts
-%   These replace raw \begin{columns}...\end{columns} for the most common
-%   figure-beside-text pattern. The optional argument is the FIGURE column
-%   width as a fraction of \textwidth (default 0.52).
-%
-%   \FigureExplain[ratio]{figure-content}{explanation-content}
-%   \ExplainFigure[ratio]{explanation-content}{figure-content}
-%
-%   The complementary column width is computed automatically. A 2mm gutter
-%   between columns is accounted for.
-%
-%   Example:
-%     \FigureExplain[.55]{%
-%       \includegraphics[width=\linewidth]{diagram.png}%
-%     }{%
-%       \begin{InsightCard}{Key observation}
-%         The peak at 6.1 is the posterior mode.
-%       \end{InsightCard}
-%     }
+% 1. Figure Dominant & Scientific Visualizations
+%    Figure takes 65-75% of the canvas; editorial annotation sits on the right or bottom.
 % -------------------------------------------------------------------------
+\newcommand{\FigureDominant}[4][.65]{%
+  \begin{columns}[T,onlytextwidth]%
+    \begin{column}{#1\textwidth}%
+      \centering #2%
+    \end{column}%
+    \hfill%
+    \begin{column}{\dimexpr(1\textwidth-#1\textwidth-3mm)\relax}%
+      \vspace{.08cm}%
+      {\small\bfseries\color{BayesTeal}#3}\par\vspace{.06cm}%
+      {\scriptsize\color{BayesSecondary}#4}%
+    \end{column}%
+  \end{columns}%
+}
+
 \newcommand{\FigureExplain}[3][.52]{%
   \begin{columns}[T,onlytextwidth]%
     \begin{column}{#1\textwidth}#2\end{column}%
@@ -41,27 +38,101 @@
 }
 
 % -------------------------------------------------------------------------
-% Vertical Composition Helpers
-%   Structured alternatives to bare \vspace{} between components.
-%
-%   \SlideTwo{top}{bottom}
-%     Two stacked components with a standard \BayesGap between them.
-%     Most common pattern for a card + takeaway or equation + insight.
-%
-%   \SlideThree{a}{b}{c}
-%     Three stacked components, each separated by \BayesGap.
-%     Use for: goals + equation + takeaway patterns.
-%
-%   \SlideFill{top}{bottom}
-%     Two stacked components with \vfill between them.
-%     Bottom component is pushed to the foot of the content area.
-%     Use for: main-content + caption or main-content + attribution.
-%
-%   \SlideCaption{main}{caption-text}
-%     Convenience wrapper for the common "figure/diagram + caption at foot"
-%     pattern. Caption is rendered with \BayesCaption styling.
+% 2. Mathematical Derivation Sequences (Blackboard Clarity)
+%    Spacious stacked equations with step labels and analytical commentary.
+% -------------------------------------------------------------------------
+\newcommand{\DerivationTwoStep}[6]{%
+  \begin{columns}[c,onlytextwidth]%
+    \begin{column}{.12\textwidth}%
+      \tcbox[on line,boxsep=0pt,left=4pt,right=4pt,top=1.5pt,bottom=1.5pt,colback=BayesTeal,colframe=BayesTeal,arc=1.0mm]{%
+        \tiny\bfseries\color{white}#1%
+      }%
+    \end{column}%
+    \begin{column}{.56\textwidth}%
+      \centering\large\(\displaystyle #2\)%
+    \end{column}%
+    \begin{column}{.30\textwidth}%
+      {\scriptsize\color{BayesSecondary}#3}%
+    \end{column}%
+  \end{columns}%
+  \vspace{.22cm}%
+  \begin{columns}[c,onlytextwidth]%
+    \begin{column}{.12\textwidth}%
+      \tcbox[on line,boxsep=0pt,left=4pt,right=4pt,top=1.5pt,bottom=1.5pt,colback=BayesTeal,colframe=BayesTeal,arc=1.0mm]{%
+        \tiny\bfseries\color{white}#4%
+      }%
+    \end{column}%
+    \begin{column}{.56\textwidth}%
+      \centering\large\(\displaystyle #5\)%
+    \end{column}%
+    \begin{column}{.30\textwidth}%
+      {\scriptsize\color{BayesSecondary}#6}%
+    \end{column}%
+  \end{columns}%
+}
+
+% -------------------------------------------------------------------------
+% 3. Editorial Split Columns (Hairline Separation, No Bulky Boxes)
+% -------------------------------------------------------------------------
+\newcommand{\SplitEditorial}[4]{%
+  \begin{columns}[T,onlytextwidth]%
+    \begin{column}{.48\textwidth}%
+      {\small\bfseries\color{BayesTeal}#1}\par\vspace{.08cm}%
+      {\scriptsize\color{BayesInk}#2}%
+    \end{column}%
+    \hfill{\color{BayesBorder}\vrule width .4pt}\hfill%
+    \begin{column}{.48\textwidth}%
+      {\small\bfseries\color{BayesInk}#3}\par\vspace{.08cm}%
+      {\scriptsize\color{BayesInk}#4}%
+    \end{column}%
+  \end{columns}%
+}
+
+% -------------------------------------------------------------------------
+% 4. Single Big Idea / Standalone Axiom (Monumental Scale)
+% -------------------------------------------------------------------------
+\newcommand{\BigIdea}[2]{%
+  \vfill%
+  \begin{center}%
+    {\fontsize{22}{27}\selectfont\bfseries\color{BayesTeal}#1}\par\vspace{.22cm}%
+    {\large\color{BayesSecondary}#2}%
+  \end{center}%
+  \vfill%
+}
+
+\newcommand{\BigIdeaHero}[3]{%
+  \vfill%
+  \begin{center}%
+    {\fontsize{24}{29}\selectfont\bfseries\color{BayesInk}#1}\par\vspace{.18cm}%
+    {\large\color{BayesTeal}\bfseries #2}\par\vspace{.12cm}%
+    {\normalsize\color{BayesSecondary}#3}%
+  \end{center}%
+  \vfill%
+}
+
+% -------------------------------------------------------------------------
+% 5. Visual Analogy & Intuition Primitives
+% -------------------------------------------------------------------------
+\newcommand{\VisualAnalogy}[4]{%
+  \begin{columns}[T,onlytextwidth]%
+    \begin{column}{.48\textwidth}%
+      {\small\bfseries\color{BayesAmber}PHYSICAL ANALOGY\enspace\textbar\enspace #1}\par\vspace{.08cm}%
+      {\small\color{BayesInk}#2}%
+    \end{column}%
+    \hfill{\color{BayesBorder}\vrule width .4pt}\hfill%
+    \begin{column}{.48\textwidth}%
+      {\small\bfseries\color{BayesTeal}MATHEMATICAL FORMULATION\enspace\textbar\enspace #3}\par\vspace{.08cm}%
+      {\small\color{BayesInk}#4}%
+    \end{column}%
+  \end{columns}%
+}
+
+% -------------------------------------------------------------------------
+% 6. Vertical Composition Helpers
 % -------------------------------------------------------------------------
 \newcommand{\SlideTwo}[2]{#1\BayesGap#2}
 \newcommand{\SlideThree}[3]{#1\BayesGap#2\BayesGap#3}
 \newcommand{\SlideFill}[2]{#1\vfill#2}
 \newcommand{\SlideCaption}[2]{#1\vfill\BayesCaption{#2}}
+
+\endinput

@@ -3,7 +3,7 @@ SHELL := /bin/bash
 
 SRC_DIR := src
 
-.PHONY: all help sample sample-decks sample-notes sample-videos course decks notes videos session topic concept chapter section video-session all-decks all-notes all-videos scaffold-check validate list clean
+.PHONY: all help sample gallery-deck sample-decks sample-notes sample-videos course decks notes videos session topic concept chapter section video-session all-decks all-notes all-videos scaffold-check validate list clean
 
 help:
 	@$(MAKE) -C $(SRC_DIR) help ROOT="$(CURDIR)"
@@ -11,8 +11,11 @@ help:
 sample:
 	@$(MAKE) -C $(SRC_DIR) sample ROOT="$(CURDIR)"
 
+gallery-deck:
+	@$(MAKE) -C $(SRC_DIR) gallery-deck ROOT="$(CURDIR)"
+
 sample-decks:
-	@$(MAKE) -C $(SRC_DIR) sample-decks ROOT="$(CURDIR)"
+	@$(MAKE) -C $(SRC_DIR) gallery-deck ROOT="$(CURDIR)"
 
 sample-notes:
 	@$(MAKE) -C $(SRC_DIR) sample-notes ROOT="$(CURDIR)"

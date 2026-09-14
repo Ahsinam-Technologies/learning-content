@@ -56,13 +56,15 @@ video-setup:
 	@echo "Video dependencies installed in $(ROOT)/.venv"
 
 # --- Reference Samples ---
-sample-decks:
+gallery-deck:
 	@mkdir -p "$(OUTPUT_DIR)/sample/decks"
-	@echo "==> Building sample slide deck [$(ENGINE)]"
+	@echo "==> Building gallery sample slide deck [$(ENGINE)]"
 	@cd "$(SRC)/decks/sample" && \
-	  TEXINPUTS="$(TEX_INPUTS_ENV)" $(LATEXMK) -$(ENGINE) -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$(BUILD)/sample/decks" "sample-decks.tex"
-	@cp "$(BUILD)/sample/decks/sample-decks.pdf" "$(OUTPUT_DIR)/sample/decks/sample-decks.pdf"
-	@echo "Generated: $(OUTPUT_DIR)/sample/decks/sample-decks.pdf"
+	  TEXINPUTS="$(TEX_INPUTS_ENV)" $(LATEXMK) -$(ENGINE) -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$(BUILD)/sample/decks" "gallery-deck.tex"
+	@cp "$(BUILD)/sample/decks/gallery-deck.pdf" "$(OUTPUT_DIR)/sample/decks/gallery-deck.pdf"
+	@echo "Generated: $(OUTPUT_DIR)/sample/decks/gallery-deck.pdf"
+
+sample-decks: gallery-deck
 
 sample-notes:
 	@mkdir -p "$(OUTPUT_DIR)/sample/notes"
@@ -79,7 +81,7 @@ sample-videos:
 	@test -s "$(OUTPUT_DIR)/sample/videos/lesson.mp4"
 	@echo "Generated: $(OUTPUT_DIR)/sample/videos/lesson.mp4"
 
-sample: sample-decks sample-notes sample-videos
+sample: gallery-deck sample-notes sample-videos
 
 # --- Assembled Course Targets ---
 course: decks notes videos
@@ -212,7 +214,7 @@ scaffold-check:
 	exit $$failed
 
 validate: sample-decks sample-notes sample-videos
-	@test -s "$(OUTPUT_DIR)/sample/decks/sample-decks.pdf"
+	@test -s "$(OUTPUT_DIR)/sample/decks/gallery-deck.pdf"
 	@test -s "$(OUTPUT_DIR)/sample/notes/sample-notes.pdf"
 	@test -s "$(OUTPUT_DIR)/sample/videos/lesson.mp4"
 	@echo "Validation succeeded: all reference artifacts verified."
