@@ -1,0 +1,101 @@
+% bayesstackgeometry.sty — Named slide geometry tokens and canvas mode environments.
+% Loaded by bayesstackslides.sty; do not load directly.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bayesstackgeometry}[2026/09/14 BayesStack slide geometry tokens and canvas modes]
+
+% -------------------------------------------------------------------------
+% Beamer 16:9 Geometry Constants
+%   Paper: 160mm x 90mm (Beamer aspectratio=169)
+%
+%   TUNING POINT (rendering machine):
+%     BayesHeaderHeight — height reserved for the frametitle chrome.
+%     BayesFooterHeight — height reserved for the footline chrome.
+%   Adjust these two lengths if content consistently overruns or leaves
+%   excess whitespace after the first real render. All derived BayesContent*
+%   lengths update automatically since they are computed at \AtBeginDocument.
+%
+%   Estimation basis:
+%     Header: vspace(.22cm) + font(15/18pt line) + rule(.08cm) + rule + vspace(.08cm)
+%             ~ 11.5mm
+%     Footer: ht=3.6mm + dp=1.0mm + vskip=1.0mm ~ 5.6mm
+% -------------------------------------------------------------------------
+\newlength{\BayesSafeMarginH}
+\newlength{\BayesHeaderHeight}
+\newlength{\BayesFooterHeight}
+\newlength{\BayesContentHeight}
+\newlength{\BayesContentWidth}
+
+\setlength{\BayesSafeMarginH}{7.8mm}
+\setlength{\BayesHeaderHeight}{11.5mm}
+\setlength{\BayesFooterHeight}{5.6mm}
+
+\AtBeginDocument{%
+  \setlength{\BayesContentWidth}{\textwidth}%
+  \setlength{\BayesContentHeight}{\paperheight}%
+  \addtolength{\BayesContentHeight}{-\BayesHeaderHeight}%
+  \addtolength{\BayesContentHeight}{-\BayesFooterHeight}%
+}
+
+% -------------------------------------------------------------------------
+% Standard Component Gap Tokens
+%   Replace ad-hoc \vspace{.12cm}/\vspace{.15cm} with named tokens.
+%   Changing BayesGap here updates every slide that uses it centrally.
+%
+%   Usage:  content-block-A \BayesGap content-block-B
+% -------------------------------------------------------------------------
+\newcommand{\BayesGap}{\vspace{.15cm}}
+\newcommand{\BayesSmallGap}{\vspace{.08cm}}
+\newcommand{\BayesBigGap}{\vspace{.28cm}}
+\newcommand{\BayesHGap}{\hspace{.15cm}}
+
+% -------------------------------------------------------------------------
+% Canvas Mode Environments
+%   These expose, to content authors, the same full-bleed pattern already
+%   used internally by \SessionDivider and \TopicDivider.
+%
+%   FullCanvas  — plain frame, no chrome. The entire 160x90mm page is usable.
+%                 Best for: large TikZ diagrams, full-screen images, custom math.
+%   DarkCanvas  — plain frame on BayesDark background.
+%                 Best for: dramatic section transitions, emphasis slides.
+%   LightCanvas — plain frame on BayesPale background.
+%                 Best for: soft topic dividers, gentle emphasis slides.
+%
+%   Each environment wraps a Beamer [plain] frame inside a group so that
+%   template overrides are scoped and do not leak into subsequent slides.
+%
+%   Usage:
+%     \begin{FullCanvas}
+%       \begin{tikzpicture}[remember picture,overlay] ... \end{tikzpicture}
+%     \end{FullCanvas}
+% -------------------------------------------------------------------------
+\newenvironment{FullCanvas}{%
+  \begingroup
+  \setbeamertemplate{headline}{}%
+  \setbeamertemplate{footline}{}%
+  \begin{frame}[plain,environment=FullCanvas]%
+}{%
+  \end{frame}%
+  \endgroup
+}
+
+\newenvironment{DarkCanvas}{%
+  \begingroup
+  \setbeamercolor{background canvas}{bg=BayesDark}%
+  \setbeamertemplate{headline}{}%
+  \setbeamertemplate{footline}{}%
+  \begin{frame}[plain,environment=DarkCanvas]%
+}{%
+  \end{frame}%
+  \endgroup
+}
+
+\newenvironment{LightCanvas}{%
+  \begingroup
+  \setbeamercolor{background canvas}{bg=BayesPale}%
+  \setbeamertemplate{headline}{}%
+  \setbeamertemplate{footline}{}%
+  \begin{frame}[plain,environment=LightCanvas]%
+}{%
+  \end{frame}%
+  \endgroup
+}

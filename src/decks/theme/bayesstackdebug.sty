@@ -1,0 +1,132 @@
+% bayesstackdebug.sty — Layout debug guides and overflow diagnostics.
+% Loaded by bayesstackslides.sty; do not load directly.
+%
+% PRODUCTION SAFETY: Debug output is gated by \ifBayesDebugMode which
+% defaults to false. It cannot appear in production builds unless
+% \BayesDebugOn or \usepackage[debug]{bayesstackslides} is called.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bayesstackdebug}[2026/09/14 BayesStack layout debug and diagnostics]
+
+% -------------------------------------------------------------------------
+% Global Debug Flag
+%   \BayesDebugOn  — enable guides on all subsequent frames
+%   \BayesDebugOff — disable
+%
+%   Alternatively: \usepackage[debug]{bayesstackslides} enables from the start.
+%
+%   Guides can also be scoped to a single region:
+%     {\BayesDebugOn \begin{frame}...\end{frame} \BayesDebugOff}
+% -------------------------------------------------------------------------
+\newif\ifBayesDebugMode
+\BayesDebugModefalse
+\newcommand{\BayesDebugOn}{\BayesDebugModetrue}
+\newcommand{\BayesDebugOff}{\BayesDebugModefalse}
+
+% -------------------------------------------------------------------------
+% Debug Guide Overlay
+%   Draws a TikZ overlay on the current frame. Requires two-pass compilation
+%   (latexmk handles this automatically).
+%
+%   Visual guides:
+%     Red dashed rectangle — content area boundary (safe zone for authoring)
+%     Blue tinted band     — header chrome zone (frametitle + rule)
+%     Blue dotted line     — header/content boundary
+%     Green tinted band    — footer chrome zone (footline)
+%     Green dotted line    — footer/content boundary
+%     Gray dotted line     — vertical midpoint of content area
+%     Label (bottom-right) — live content area dimensions
+%
+%   Depends on: BayesSafeMarginH, BayesHeaderHeight, BayesFooterHeight,
+%               BayesContentHeight, BayesContentWidth (bayesstackgeometry.sty).
+% -------------------------------------------------------------------------
+\newlength{\BayesDebugMidY}
+
+\newcommand{\BayesDebugGuides}{%
+  \setlength{\BayesDebugMidY}{\BayesHeaderHeight}%
+  \addtolength{\BayesDebugMidY}{.5\BayesContentHeight}%
+  \begin{tikzpicture}[remember picture,overlay]
+    % --- content area boundary ---
+    \draw[red!55!white,line width=0.6pt,dashed]
+      ([xshift=\BayesSafeMarginH,yshift=-\BayesHeaderHeight]current page.north west)
+      rectangle
+      ([xshift=-\BayesSafeMarginH,yshift=\BayesFooterHeight]current page.south east);
+    % --- header zone ---
+    \fill[blue!8!white,opacity=0.50]
+      (current page.north west) rectangle
+      ([yshift=-\BayesHeaderHeight]current page.north east);
+    \draw[blue!40!white,line width=0.5pt,dotted]
+      ([yshift=-\BayesHeaderHeight]current page.north west) --
+      ([yshift=-\BayesHeaderHeight]current page.north east);
+    % --- footer zone ---
+    \fill[green!8!white,opacity=0.50]
+      ([yshift=\BayesFooterHeight]current page.south west) rectangle
+      (current page.south east);
+    \draw[green!40!white,line width=0.5pt,dotted]
+      ([yshift=\BayesFooterHeight]current page.south west) --
+      ([yshift=\BayesFooterHeight]current page.south east);
+    % --- vertical midpoint of content area ---
+    \draw[gray!40,line width=0.3pt,dotted]
+      ([xshift=\BayesSafeMarginH,yshift=-\BayesDebugMidY]current page.north west) --
+      ([xshift=-\BayesSafeMarginH,yshift=-\BayesDebugMidY]current page.north east);
+    % --- dimension label ---
+    \node[anchor=south east,font=\tiny\sffamily,text=red!65!black,
+          fill=white,fill opacity=0.82,text opacity=1,
+          inner sep=1.5pt,rounded corners=1pt]
+      at ([xshift=-\BayesSafeMarginH,yshift=\BayesFooterHeight]current page.south east)
+      {content\,\the\BayesContentWidth\,$\times$\,\the\BayesContentHeight};
+  \end{tikzpicture}%
+}
+
+% -------------------------------------------------------------------------
+% Automatic debug guide injection via background template hook.
+%   When BayesDebugMode is true every frame receives the guide overlay.
+%   On [plain] frames (FullCanvas, DarkCanvas, LightCanvas) the background
+%   template may render differently; call \BayesDebugGuides manually inside
+%   the frame body if guides are needed there.
+% -------------------------------------------------------------------------
+\addtobeamertemplate{background}{}{%
+  \ifBayesDebugMode\BayesDebugGuides\fi
+}
+
+% -------------------------------------------------------------------------
+% Per-Component Overflow Check
+%   \BayesOverflowCheck[label]{content}
+%
+%   Boxes {content} in a minipage, measures its natural height, and emits
+%   a LaTeX Warning if it exceeds \BayesContentHeight.
+%   The content is then output as normal (measurement is non-destructive).
+%
+%   LIMITATION: minipage measurement does not capture Beamer overlay steps,
+%   tcolorbox breakable boxes, or fragile environments. Use as an early-
+%   warning indicator; visual inspection on the rendering machine is
+%   authoritative.
+%
+%   Expected warning when overflow is detected:
+%     Package bayesstackdebug Warning: Content overflow on slide (label):
+%     measured 78.4pt, content area 72.9mm (excess: 5.5pt).
+%     Shorten content, split slide, or select a denser layout.
+%
+%   Usage inside a frame:
+%     \BayesOverflowCheck[my-dense-slide]{%
+%       \begin{ConceptCard}{...}...\end{ConceptCard}
+%       \BayesGap
+%       \BayesEquation{...}
+%     }
+% -------------------------------------------------------------------------
+\newsavebox{\BayesMeasureBox}
+
+\newcommand{\BayesOverflowCheck}[2][]{%
+  \sbox{\BayesMeasureBox}{%
+    \begin{minipage}{\textwidth}#2\end{minipage}%
+  }%
+  \ifdim\ht\BayesMeasureBox>\BayesContentHeight
+    \PackageWarning{bayesstackdebug}{%
+      Content overflow on slide\ifstrempty{#1}{}{ (#1)}:\MessageBreak
+      measured \the\ht\BayesMeasureBox,\space
+      content area \the\BayesContentHeight\MessageBreak
+      (excess: \the\dimexpr\ht\BayesMeasureBox-\BayesContentHeight\relax).\MessageBreak
+      Shorten content, split slide, or select a denser layout%
+    }%
+  \fi
+  #2%
+}

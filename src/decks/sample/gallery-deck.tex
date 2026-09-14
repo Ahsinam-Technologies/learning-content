@@ -1,0 +1,661 @@
+% gallery-deck.tex — BayesStack Design System Layout Gallery
+%
+% PURPOSE: Exercises every component and layout in bayesstackslides.sty
+%   (including the new geometry/layout/debug extension modules) so that the
+%   rendering machine can visually validate the entire design system in one
+%   compilation pass.
+%
+% COMPILATION (from this directory):
+%   TEXINPUTS=../../theme:../../../notes/theme:../../core/fonts:../../core/assets:../../core/assets/img: \
+%   latexmk -xelatex gallery-deck.tex
+%
+%   Or via Makefile from the repo root:
+%   cd src && make sample-decks   (compiles sample-decks.tex; for this file
+%   temporarily rename it to sample-decks.tex or add a gallery target)
+%
+% WHAT TO INSPECT: See src/decks/VALIDATION.md for the full checklist.
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage{import}
+\usepackage[science]{bayesstackslides}
+
+\CourseMetadata{GALLERY}{BayesStack Design System}{Layout \& Component Visual Specification}
+\author{BayesStack}
+\date{}
+
+\begin{document}
+
+% =============================================================================
+% TITLE SLIDE
+% =============================================================================
+\BayesCourseTitleSlide{BayesStack Layout Gallery}{Visual specification of the design system — compile on the rendering machine to validate}
+
+% =============================================================================
+% SECTION 1: CANVAS MODES
+% Purpose: Verify that chrome appears/disappears correctly for each canvas type.
+% =============================================================================
+
+% --- S1.1 Standard chrome frame (baseline reference) ---
+% Expected: frametitle bar, footer with course code, wordmark, slide number.
+\begin{frame}{S1.1 — Standard Frame with Chrome}
+  \begin{ConceptCard}{Canvas mode: standard}
+    This is the default authoring surface. The frametitle, footer, course code,
+    wordmark, and slide counter are all present. Content occupies the area between
+    the header rule and the footline.
+  \end{ConceptCard}
+  \BayesGap
+  \BayesCaption{Verify: frametitle rule visible; footer shows course code left, wordmark and page number right.}
+\end{frame}
+
+% --- S1.2 FullCanvas (no chrome) ---
+% Expected: plain white slide, no header, no footer. Full 160x90mm available.
+\begin{FullCanvas}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=center,font=\BayesDisplayFont\fontsize{32}{38}\selectfont\bfseries\color{BayesInk}]
+      at (current page.center) {S1.2 Full Canvas};
+    \node[anchor=south,font=\small\color{BayesSecondary}]
+      at ([yshift=8mm]current page.south) {No header. No footer. 160\,mm\,$\times$\,90\,mm fully usable.};
+  \end{tikzpicture}
+\end{FullCanvas}
+
+% --- S1.3 DarkCanvas ---
+% Expected: entirely BayesDark background, no chrome, white/pale text.
+\begin{DarkCanvas}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=center,font=\BayesDisplayFont\fontsize{28}{34}\selectfont\bfseries\color{white}]
+      at (current page.center) {S1.3 Dark Canvas};
+    \node[anchor=south,font=\small\color{BayesBorder}]
+      at ([yshift=8mm]current page.south) {BayesDark background. Suitable for session dividers and dramatic emphasis.};
+  \end{tikzpicture}
+\end{DarkCanvas}
+
+% --- S1.4 LightCanvas ---
+% Expected: BayesPale background, no chrome.
+\begin{LightCanvas}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=center,font=\BayesDisplayFont\fontsize{28}{34}\selectfont\bfseries\color{BayesInk}]
+      at (current page.center) {S1.4 Light Canvas};
+    \node[anchor=south,font=\small\color{BayesSecondary}]
+      at ([yshift=8mm]current page.south) {BayesPale background. Suitable for topic dividers and soft transitions.};
+  \end{tikzpicture}
+\end{LightCanvas}
+
+% =============================================================================
+% SECTION 2: EDUCATIONAL CONTAINER COMPONENTS
+% Purpose: Verify tcolorbox styling, left accent bars, title/badge rendering.
+% =============================================================================
+
+% --- S2.1 LearningGoals ---
+\begin{frame}{S2.1 — LearningGoals}
+  \begin{LearningGoals}{By the end of this section, learners can}
+    \begin{itemize}
+      \item identify the correct educational container for a given content type;
+      \item distinguish a definition from an insight; and
+      \item recognise a CautionCard at a glance and stop before misusing it.
+    \end{itemize}
+  \end{LearningGoals}
+  \BayesCaption{Verify: teal left accent bar, OUTCOMES pill badge top-right, pale background.}
+\end{frame}
+
+% --- S2.2 DefinitionCard ---
+\begin{frame}{S2.2 — DefinitionCard}
+  \begin{DefinitionCard}{Posterior Distribution}
+    The conditional probability distribution of the parameter \(\theta\) given the
+    observed data \(y\), obtained by combining the prior \(p(\theta)\) and the
+    likelihood \(p(y \mid \theta)\) via Bayes' rule and normalising.
+  \end{DefinitionCard}
+  \BayesCaption{Verify: blue left accent bar, THEORY pill badge, "Definition — " prefix in title.}
+\end{frame}
+
+% --- S2.3 InsightCard ---
+\begin{frame}{S2.3 — InsightCard}
+  \begin{InsightCard}{Posterior is a Distribution, Not a Point}
+    The posterior encodes the full residual uncertainty about the parameter after
+    observing the data. Reducing it to a single estimate discards calibration
+    information that matters for downstream decisions.
+  \end{InsightCard}
+  \BayesCaption{Verify: teal left accent bar, CORE pill badge.}
+\end{frame}
+
+% --- S2.4 CautionCard ---
+\begin{frame}{S2.4 — CautionCard}
+  \begin{CautionCard}{Do Not Confuse Likelihood with Prior}
+    A likelihood \(p(y \mid \theta)\) is not a distribution over \(\theta\).
+    Treating it as one before multiplying by a prior and normalising is a
+    common source of incorrect inference.
+  \end{CautionCard}
+  \BayesCaption{Verify: amber left accent bar, WATCHOUT pill badge.}
+\end{frame}
+
+% --- S2.5 WorkedExample ---
+\begin{frame}{S2.5 — WorkedExample}
+  \begin{WorkedExample}{Beta-Binomial Conjugate Update}
+    Given \(\theta \sim \text{Beta}(\alpha_0, \beta_0)\) and \(n\) Bernoulli trials
+    with \(k\) successes, the posterior is:
+    \[
+      \theta \mid k \sim \text{Beta}(\alpha_0 + k,\; \beta_0 + n - k).
+    \]
+    With \(\alpha_0 = \beta_0 = 1\) (uniform prior) and \(k = 7, n = 10\):
+    posterior is \(\text{Beta}(8, 4)\).
+  \end{WorkedExample}
+  \BayesCaption{Verify: plum left accent bar, APPLIED pill badge.}
+\end{frame}
+
+% --- S2.6 KeyTakeaway ---
+\begin{frame}{S2.6 — KeyTakeaway}
+  \begin{KeyTakeaway}{Normalisation Makes the Posterior a Probability}
+    Dividing by the marginal likelihood \(p(y)\) ensures the posterior integrates to
+    one. Omitting this step leaves the numerator as an unnormalised measure, not
+    a distribution.
+  \end{KeyTakeaway}
+  \BayesCaption{Verify: teal left accent bar, SUMMARY pill badge, pale background.}
+\end{frame}
+
+% --- S2.7 ProofSketch ---
+\begin{frame}{S2.7 — ProofSketch}
+  \begin{ProofSketch}{Existence of Conjugate Posteriors}
+    If the prior and likelihood belong to an exponential family with conjugate
+    structure, the posterior is in the same family with updated natural parameters.
+    The sufficient statistics accumulate additively across i.i.d. observations,
+    making sequential updates computationally identical to a single batch update.
+  \end{ProofSketch}
+  \BayesCaption{Verify: dark (BayesDark) left accent bar, RIGOR pill badge.}
+\end{frame}
+
+% --- S2.8 ExerciseCard ---
+\begin{frame}{S2.8 — ExerciseCard}
+  \begin{ExerciseCard}{Derive the Posterior Mean for Beta-Binomial}
+    \begin{enumerate}
+      \item Write out the unnormalised posterior \(p(\theta \mid k) \propto p(k \mid \theta)\,p(\theta)\).
+      \item Identify the kernel of the Beta distribution.
+      \item Compute the posterior mean \(\mathbb{E}[\theta \mid k]\) in terms of \(\alpha, \beta, n, k\).
+    \end{enumerate}
+  \end{ExerciseCard}
+  \BayesCaption{Verify: teal left accent bar, LAB pill badge, pale background.}
+\end{frame}
+
+% =============================================================================
+% SECTION 3: MATHEMATICAL COMPONENTS
+% Purpose: Verify equation box sizing, derivation step layout, vertical fit.
+% =============================================================================
+
+% --- S3.1 BayesEquation standalone ---
+\begin{frame}{S3.1 — BayesEquation (standalone)}
+  \BayesEquation{p(\theta \mid y) = \frac{p(y \mid \theta)\,p(\theta)}{p(y)}}
+  \BayesCaption{Verify: centred tcolorbox, equation at display size, 90\% width, teal-bordered pale box.}
+\end{frame}
+
+% --- S3.2 Single MathDerivationStep ---
+\begin{frame}{S3.2 — MathDerivationStep (single)}
+  \MathDerivationStep{1}{Bayes' Rule}{%
+    p(\theta \mid y) = \frac{p(y \mid \theta)\,p(\theta)}{p(y)}
+  }{%
+    The marginal \(p(y)\) normalises the product of likelihood and prior to produce
+    a proper probability distribution over \(\theta\).
+  }
+  \BayesCaption{Verify: step badge left; equation in pale box; analytical invariant text right.}
+\end{frame}
+
+% --- S3.3 Two MathDerivationSteps stacked (vertical fit test) ---
+% Expected: both steps fit without overflowing into the footer.
+\begin{frame}{S3.3 — Two MathDerivationSteps (vertical fit test)}
+  \MathDerivationStep{1}{Continuous SDE}{%
+    dS_t = \mu S_t\,dt + \sigma S_t\,dW_t
+  }{%
+    Asset prices follow a continuous diffusion where \(W_t\) is a standard Wiener
+    process satisfying \(\mathbb{E}[dW_t] = 0\), \(\mathrm{Var}(dW_t) = dt\).
+  }
+  \BayesGap
+  \MathDerivationStep{2}{It\^{o}'s Chain Rule}{%
+    df = \!\left(\frac{\partial f}{\partial t} + \mu S\frac{\partial f}{\partial S}
+    + \tfrac{1}{2}\sigma^2 S^2\frac{\partial^2 f}{\partial S^2}\right)\!dt
+    + \sigma S\frac{\partial f}{\partial S}\,dW_t
+  }{%
+    The quadratic variation \((dW_t)^2 = dt\) introduces the non-zero second-order
+    drift correction absent from classical calculus.
+  }
+  \BayesCaption{Verify: both steps fully visible; no footer overlap.}
+\end{frame}
+
+% --- S3.4 ProofSketch with inline math ---
+\begin{frame}{S3.4 — ProofSketch with inline math}
+  \begin{ProofSketch}{Ito Isometry}
+    For an adapted square-integrable process \(f(t)\):
+    \[
+      \mathbb{E}\!\left[\left(\int_0^T\! f(t)\,dW_t\right)^{\!2}\right]
+      = \mathbb{E}\!\left[\int_0^T\! f(t)^2\,dt\right].
+    \]
+    The isometry converts a stochastic integral into a Lebesgue integral,
+    enabling \(L^2\) analysis of Ito processes.
+  \end{ProofSketch}
+  \BayesCaption{Verify: display math inside ProofSketch is readable and not clipped.}
+\end{frame}
+
+% =============================================================================
+% SECTION 4: DATA & METRICS (StatCard grids)
+% Purpose: Verify column alignment and card proportions at each grid width.
+% =============================================================================
+
+% --- S4.1 StatGridTwo ---
+\begin{frame}{S4.1 — StatGridTwo}
+  \StatGridTwo{%
+    \StatCard{1.2 GB}{KV Cache}{Per Request @ 8k context}{70B model, GQA variant}%
+  }{%
+    \StatCard{4.8K}{tokens/s}{Generation Throughput}{8-way tensor parallel}%
+  }
+  \BayesCaption{Verify: two equal-width cards; teal top accent bar on each.}
+\end{frame}
+
+% --- S4.2 StatGridThree ---
+\begin{frame}{S4.2 — StatGridThree}
+  \StatGridThree{%
+    \StatCard{1.0 ns}{L1 Cache}{4 cycles}{64 KB / core}%
+  }{%
+    \StatCard{28 ns}{L3 Cache}{55 cycles}{32 MB shared}%
+  }{%
+    \StatCard{95 ns}{DRAM}{220 cycles}{Off-chip DDR5}%
+  }
+  \BayesCaption{Verify: three cards, equal widths, hfill gutters.}
+\end{frame}
+
+% --- S4.3 StatGridFour ---
+\begin{frame}{S4.3 — StatGridFour}
+  \StatGridFour{%
+    \StatCard{1.0 ns}{L1}{4 cycles}{64 KB/core}%
+  }{%
+    \StatCard{3.8 ns}{L2}{14 cycles}{1 MB/core}%
+  }{%
+    \StatCard{28 ns}{L3}{55 cycles}{32 MB shared}%
+  }{%
+    \StatCard{95 ns}{DRAM}{220 cycles}{Off-chip}%
+  }
+  \BayesCaption{Verify: four cards side-by-side; text does not clip at this width.}
+\end{frame}
+
+% =============================================================================
+% SECTION 5: CODE AND TERMINAL COMPONENTS
+% Purpose: Verify monospace font, syntax highlighting, line background colours.
+% =============================================================================
+
+% --- S5.1 CodeBlock ---
+\begin{frame}[fragile]{S5.1 — CodeBlock (Python)}
+  \begin{CodeBlock}{python}
+import numpy as np
+
+def beta_posterior(alpha0, beta0, k, n):
+    """Conjugate Beta-Binomial update."""
+    return alpha0 + k, beta0 + n - k
+
+alpha, beta = beta_posterior(1, 1, 7, 10)
+print(f"Posterior: Beta({alpha}, {beta})")  # Beta(8, 4)
+  \end{CodeBlock}
+  \BayesCaption{Verify: teal code background; teal keywords; plum strings; line numbers left.}
+\end{frame}
+
+% --- S5.2 HighlightedCodeBlock ---
+\begin{frame}[fragile]{S5.2 — HighlightedCodeBlock (line 4 highlighted)}
+  \begin{HighlightedCodeBlock}{python}{4}
+def log_posterior(theta, y, alpha, beta):
+    log_prior = (alpha - 1)*np.log(theta) + (beta - 1)*np.log(1 - theta)
+    log_lik   = np.sum(y * np.log(theta) + (1 - y) * np.log(1 - theta))
+    return log_prior + log_lik   # <-- highlighted: key accumulation
+  \end{HighlightedCodeBlock}
+  \BayesCaption{Verify: line 4 has a distinct CodeHighlight background; all other lines use standard background.}
+\end{frame}
+
+% --- S5.3 TerminalWindow ---
+\begin{frame}[fragile]{S5.3 — TerminalWindow}
+  \TerminalWindow[python3 -m pytest tests/ -v]{%
+    \$ python3 -m pytest tests/test\_bayes.py -v\par\vspace{.25em}
+    \color{BayesMuted}====== test session starts ======\par
+    \color{BayesCodeHighlight}%
+    PASSED tests/test\_bayes.py::test\_beta\_update\par
+    PASSED tests/test\_bayes.py::test\_posterior\_mean\par
+    PASSED tests/test\_bayes.py::test\_posterior\_credible\_interval\par\vspace{.25em}
+    \color{BayesTeal}====== 3 passed in 0.08s ======%
+  }
+  \BayesCaption{Verify: dark terminal background (BayesTerminalBg); macOS traffic-light dots; session label in title bar.}
+\end{frame}
+
+% =============================================================================
+% SECTION 6: LAYOUT PRIMITIVES
+% Purpose: Verify column proportions, gap token spacing, and new layout helpers.
+% =============================================================================
+
+% --- S6.1 TwoPane ---
+\begin{frame}{S6.1 — TwoPane (existing)}
+  \TwoPane{%
+    \begin{DefinitionCard}{Prior}
+      A distribution over the parameter space encoding uncertainty
+      before any data are observed.
+    \end{DefinitionCard}
+  }{%
+    \begin{DefinitionCard}{Posterior}
+      The updated distribution after the prior and likelihood are
+      combined and normalised.
+    \end{DefinitionCard}
+  }
+  \BayesCaption{Verify: two equal-width columns, top-aligned.}
+\end{frame}
+
+% --- S6.2 CompareGrid (existing) ---
+\begin{frame}{S6.2 — CompareGrid (existing)}
+  \CompareGrid{Array-of-Structures (AoS)}{%
+    \begin{itemize}\setlength{\itemsep}{.2em}
+      \item Loads unneeded fields into cache lines.
+      \item Poor SIMD vectorisation.
+    \end{itemize}
+    \PillBadge[BayesCrimson]{CACHE TRASHING}
+  }{Structure-of-Arrays (SoA)}{%
+    \begin{itemize}\setlength{\itemsep}{.2em}
+      \item Contiguous access, full cache-line utilisation.
+      \item Enables 8-wide AVX-512 bursts.
+    \end{itemize}
+    \PillBadge[BayesEmerald]{SIMD OPTIMAL}
+  }
+  \BayesCaption{Verify: left column has blue top accent; right column has teal top accent.}
+\end{frame}
+
+% --- S6.3 FigureExplain (NEW) ---
+\begin{frame}{S6.3 — FigureExplain (new, ratio=0.52)}
+  \FigureExplain{%
+    \begin{ScientificFigure}{Illustrative Beta posterior}
+      \centering
+      \begin{tikzpicture}
+        \begin{axis}[bayes/science plot,
+          xlabel={$\theta$},ylabel={density},
+          xmin=0,xmax=1,ymin=0,ymax=5.5,
+          height=.40\textheight,width=\linewidth]
+          \addplot[color=BayesMuted,domain=0.01:0.99,samples=80]{(x^(0))*(1-x)^(0)};
+          \addlegendentry{prior Beta(1,1)}
+          \addplot[color=BayesTeal,domain=0.01:0.99,samples=80]{(x^7)*(1-x)^3 * 110};
+          \addlegendentry{posterior Beta(8,4)}
+        \end{axis}
+      \end{tikzpicture}
+    \end{ScientificFigure}
+  }{%
+    \begin{InsightCard}{Figure left, explanation right}
+      \texttt{\textbackslash FigureExplain} places the figure column on the left
+      (default 52\% of text width) and the explanation column on the right.
+      The complementary width is computed automatically.
+    \end{InsightCard}
+    \BayesSmallGap
+    \BayesCaption{The uniform prior (flat) updates to a Beta(8,4) posterior after 7 successes in 10 trials.}
+  }
+\end{frame}
+
+% --- S6.4 ExplainFigure (NEW) ---
+\begin{frame}{S6.4 — ExplainFigure (new, ratio=0.52)}
+  \ExplainFigure{%
+    \begin{InsightCard}{Explanation left, figure right}
+      \texttt{\textbackslash ExplainFigure} mirrors \texttt{\textbackslash FigureExplain}:
+      the explanation column appears on the left; the figure column on the right.
+      Use when prose should precede the visual (narrative-first compositions).
+    \end{InsightCard}
+    \BayesSmallGap
+    \BayesCaption{Argument order: explanation first, figure second.}
+  }{%
+    \begin{ScientificFigure}{Illustrative Beta posterior}
+      \centering
+      \begin{tikzpicture}
+        \begin{axis}[bayes/science plot,
+          xlabel={$\theta$},ylabel={density},
+          xmin=0,xmax=1,ymin=0,ymax=5.5,
+          height=.40\textheight,width=\linewidth]
+          \addplot[color=BayesTeal,domain=0.01:0.99,samples=80]{(x^7)*(1-x)^3 * 110};
+          \addlegendentry{Beta(8,4)}
+        \end{axis}
+      \end{tikzpicture}
+    \end{ScientificFigure}
+  }
+\end{frame}
+
+% --- S6.5 SlideFill (NEW) ---
+\begin{frame}{S6.5 — SlideFill and SlideCaption (new)}
+  \SlideFill{%
+    \begin{ConceptCard}{SlideFill pushes content to extremes}
+      The top argument occupies its natural height. A \texttt{\textbackslash vfill}
+      separates it from the bottom argument, which is anchored to the bottom of
+      the content area.
+    \end{ConceptCard}
+  }{%
+    \BayesCaption{This caption is anchored at the foot of the content area via \texttt{\textbackslash SlideFill}.}%
+  }
+\end{frame}
+
+% =============================================================================
+% SECTION 7: ARCHITECTURE AND ALGORITHM COMPONENTS
+% =============================================================================
+
+% --- S7.1 ArchitectureCard with TikZ ---
+\begin{frame}{S7.1 — ArchitectureCard}
+  \ArchitectureCard{KV Cache Decoding Architecture}{%
+    \begin{tikzpicture}[node distance=0.9cm,every node/.style={font=\scriptsize\bfseries}]
+      \node[bayes/data] (prompt) {Context Tokens};
+      \node[bayes/model,right=0.9cm of prompt] (kv) {KV Cache\\\tiny(HBM Buffer)};
+      \node[bayes/node,fill=BayesTeal,text=white,right=0.9cm of kv] (tok) {New Token};
+      \draw[bayes/flow] (prompt) -- (kv);
+      \draw[bayes/flow] (kv) -- (tok);
+    \end{tikzpicture}
+  }{Precomputed Key/Value tensors convert \(O(N^2)\) attention into an \(O(N)\) memory lookup per decode step.}
+  \BayesCaption{Verify: teal left accent, ARCHITECTURE pill badge, diagram centred, note text left-aligned below.}
+\end{frame}
+
+% --- S7.2 AlgorithmCard ---
+\begin{frame}{S7.2 — AlgorithmCard}
+  \AlgorithmCard{Raft Leader Election}{O(1) per heartbeat}{%
+    \textbf{1. Timeout:} Follower increments term \(T\), transitions to Candidate.\par\vspace{.3em}
+    \textbf{2. Vote:} Candidate requests votes from all nodes; votes granted if \(\text{term} > T_{\text{local}}\).\par\vspace{.3em}
+    \textbf{3. Quorum:} Candidate becomes Leader on receiving \(\lfloor N/2\rfloor + 1\) votes.
+  }
+  \BayesCaption{Verify: teal left accent, algorithmic complexity pill badge top-right.}
+\end{frame}
+
+% --- S7.3 QuantPayoffCard ---
+\begin{frame}{S7.3 — QuantPayoffCard}
+  \QuantPayoffCard{Black-Scholes-Merton PDE}{%
+    \frac{\partial V}{\partial t} + \tfrac{1}{2}\sigma^2 S^2
+    \frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV = 0
+  }{%
+    \textbf{Option Greeks:}\par\vspace{.1em}
+    \begin{itemize}\scriptsize\setlength{\itemsep}{.1em}
+      \item \(\Delta = \partial V/\partial S\)
+      \item \(\Gamma = \partial^2 V/\partial S^2\)
+      \item \(\mathcal{V} = \partial V/\partial\sigma\)
+    \end{itemize}
+  }{Self-financing replicating portfolio eliminates \(dW_t\); derivative value governed by \(\sigma\), not \(\mu\).}
+  \BayesCaption{Verify: amber left accent, QUANT DERIVATIVES pill badge.}
+\end{frame}
+
+% =============================================================================
+% SECTION 8: COMPOSITE SLIDE PATTERNS
+% Purpose: Demonstrate real authoring workflows combining multiple components.
+% These are the patterns authors will use most frequently.
+% =============================================================================
+
+% --- S8.1 Pattern: LearningGoals + TakeawayBanner ---
+\begin{frame}{S8.1 — Pattern: LearningGoals + TakeawayBanner}
+  \begin{LearningGoals}{By the end of this topic, learners can}
+    \begin{itemize}
+      \item derive the scaled dot-product attention formula from first principles;
+      \item calculate KV cache memory footprint for a given model and context length; and
+      \item contrast MHA with GQA in terms of memory and throughput trade-offs.
+    \end{itemize}
+  \end{LearningGoals}
+  \BayesGap
+  \TakeawayBanner{Production LLM efficiency is memory-bandwidth bound, not compute-FLOPS bound.}
+\end{frame}
+
+% --- S8.2 Pattern: Two MathDerivationSteps + TakeawayBanner ---
+\begin{frame}{S8.2 — Pattern: DerivationSteps + TakeawayBanner}
+  \MathDerivationStep{1}{Risk-Neutral Measure}{%
+    dS_t = r\,S_t\,dt + \sigma\,S_t\,d\tilde{W}_t
+  }{Under the risk-neutral measure \(\mathbb{Q}\), the drift is replaced by the
+    risk-free rate \(r\).}
+  \BayesSmallGap
+  \MathDerivationStep{2}{European Call Payoff}{%
+    C_0 = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[\max(S_T - K,\,0)]
+  }{Discounting the expected payoff under \(\mathbb{Q}\) gives the arbitrage-free price.}
+  \BayesGap
+  \TakeawayBanner{Arbitrage-free pricing removes \(\mu\); only \(\sigma\) drives derivative value.}
+\end{frame}
+
+% --- S8.3 Pattern: StatGridThree + ConceptCard ---
+\begin{frame}{S8.3 — Pattern: StatGridThree + ConceptCard}
+  \StatGridThree{%
+    \StatCard{12 ns}{Atomic CAS}{Single-core}{Hardware CMPXCHG}%
+  }{%
+    \StatCard{1450 ns}{Mutex Lock}{Kernel ctx-switch}{Thread rescheduling}%
+  }{%
+    \StatCard{120\texttimes}{Throughput}{Lock-free ring}{Zero syscalls hot-path}%
+  }
+  \BayesGap
+  \begin{ConceptCard}[LOCK-FREE]{The Latency Gap}
+    Eliminating OS kernel transitions on the critical path yields
+    orders-of-magnitude lower tail latency for concurrent data structures.
+  \end{ConceptCard}
+\end{frame}
+
+% --- S8.4 Pattern: BayesEquation + ProofSketch ---
+\begin{frame}{S8.4 — Pattern: BayesEquation + ProofSketch}
+  \BayesEquation{
+    \text{Attention}(Q,K,V) = \operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+  }
+  \BayesGap
+  \begin{ProofSketch}{Why divide by \(\sqrt{d_k}\)?}
+    For \(q_i, k_j \sim \mathcal{N}(0,1)\), the dot product \(q_i \cdot k_j\) has
+    variance \(d_k\). Dividing by \(\sqrt{d_k}\) preserves unit variance, preventing
+    softmax saturation and gradient vanishing.
+  \end{ProofSketch}
+\end{frame}
+
+% --- S8.5 Pattern: TwoPane + BayesCaption via SlideCaption ---
+\begin{frame}{S8.5 — Pattern: TwoPane + footer caption (SlideCaption)}
+  \SlideCaption{%
+    \TwoPane{%
+      \begin{KeyTakeaway}{Left takeaway}
+        The posterior combines prior belief with observed evidence.
+        More data concentrates mass; less data leaves uncertainty spread.
+      \end{KeyTakeaway}
+    }{%
+      \begin{KeyTakeaway}{Right takeaway}
+        The likelihood function is not a distribution over the parameter
+        until combined with a prior and normalised.
+      \end{KeyTakeaway}
+    }%
+  }{SlideCaption anchors a footnote at the foot of the content area using \texttt{\textbackslash vfill}.}
+\end{frame}
+
+% =============================================================================
+% SECTION 9: GAP TOKEN DEMONSTRATION
+% Purpose: Show the three named gaps side-by-side for calibration.
+% =============================================================================
+
+\begin{frame}{S9 — Gap Tokens (\textbackslash BayesSmallGap, \textbackslash BayesGap, \textbackslash BayesBigGap)}
+  \begin{ConceptCard}{Block A}
+    Content block using \texttt{\textbackslash BayesSmallGap} (0.08 cm) below.
+  \end{ConceptCard}
+  \BayesSmallGap
+  \begin{ConceptCard}{Block B}
+    Content block using \texttt{\textbackslash BayesGap} (0.15 cm) below.
+  \end{ConceptCard}
+  \BayesGap
+  \begin{ConceptCard}{Block C}
+    Content block using \texttt{\textbackslash BayesBigGap} (0.28 cm) below.
+  \end{ConceptCard}
+  \BayesBigGap
+  \BayesCaption{Verify: three visually distinct gaps between the blocks.}
+\end{frame}
+
+% =============================================================================
+% SECTION 10: DEBUG MODE DEMONSTRATION
+% Purpose: Confirm that the layout guide overlay renders correctly.
+% After these two slides, debug mode is turned off.
+% =============================================================================
+
+\BayesDebugOn
+
+% --- S10.1 Normal frame with debug guides active ---
+% Expected: red dashed content-area rectangle; blue header band; green footer band;
+%           gray midpoint dotted line; dimension label bottom-right.
+\begin{frame}{S10.1 — Debug Guides Active (normal frame)}
+  \begin{InsightCard}{Debug guides are drawn by the background template}
+    When \texttt{\textbackslash BayesDebugOn} is in effect, every subsequent frame
+    receives the guide overlay automatically. The overlay does not consume frame
+    content space.
+  \end{InsightCard}
+  \BayesCaption{Verify: red dashed rectangle marks the safe content zone; blue=header; green=footer; gray=midline.}
+\end{frame}
+
+% --- S10.2 Dense frame with debug guides (overflow proximity test) ---
+\begin{frame}{S10.2 — Debug Guides: Dense Content Proximity Test}
+  \begin{LearningGoals}{Dense content block}
+    \begin{itemize}
+      \item This slide tests whether content approaching the bottom boundary
+            of the content area remains visually clear of the footer.
+      \item The red dashed rectangle should frame all content.
+      \item If the InsightCard below appears partially behind the footer, adjust
+            \texttt{\textbackslash BayesFooterHeight} in bayesstackgeometry.sty.
+    \end{itemize}
+  \end{LearningGoals}
+  \BayesGap
+  \begin{InsightCard}{Second component}
+    This component should fit comfortably above the footer. The debug overlay
+    makes the boundary visible without requiring a PDF ruler.
+  \end{InsightCard}
+\end{frame}
+
+\BayesDebugOff
+
+% =============================================================================
+% SECTION 11: EDGE CASES
+% Purpose: Test boundary conditions that are common sources of authoring errors.
+% =============================================================================
+
+% --- S11.1 Long frametitle ---
+% Expected: frametitle wraps or truncates gracefully; no overlap with content area.
+\begin{frame}{S11.1 — Long Frametitle: Scaled Dot-Product Attention, KV Cache Memory Footprint, and Grouped-Query Attention for High-Throughput LLM Serving}
+  \begin{CautionCard}{Frametitle length test}
+    This frametitle is intentionally long. Verify that it does not clip the
+    teal accent rule below it, does not intrude into the content area, and
+    does not collide with the footer. Prefer frametitles under 80 characters.
+  \end{CautionCard}
+\end{frame}
+
+% --- S11.2 Dense slide (visual overflow test without BayesOverflowCheck) ---
+% Expected: all components visible; content should not slip behind footer.
+\begin{frame}{S11.2 — Dense Slide (visual overflow proximity)}
+  \MathDerivationStep{1}{Ito SDE}{dS_t = \mu S_t\,dt + \sigma S_t\,dW_t}{%
+    Geometric Brownian Motion; multiplicative noise.}
+  \BayesSmallGap
+  \MathDerivationStep{2}{Log-Normal Solution}{%
+    S_T = S_0\,\exp\!\left((\mu-\tfrac{1}{2}\sigma^2)T + \sigma W_T\right)
+  }{%
+    Closed-form solution via Ito's lemma applied to \(f = \ln S\).}
+  \BayesSmallGap
+  \TakeawayBanner{Log-normality means prices cannot go negative; log returns are normally distributed.}
+\end{frame}
+
+% --- S11.3 Single large component (full-height test) ---
+% Expected: component occupies most of the content area naturally.
+\begin{frame}{S11.3 — Single Large Component}
+  \begin{WorkedExample}{Full KV Cache Memory Calculation}
+    \textbf{Given:} LLaMA-3 70B, 8k context, BF16 precision, 80 layers, \(d_\text{model}=8192\).\par\vspace{.4em}
+    \textbf{Per layer:}
+    \[
+      \text{Cache} = 2 \times 2 \times d_\text{model} \times N_\text{ctx}
+      = 2 \times 2 \times 8192 \times 8192 \approx 268\,\text{MB per layer}
+    \]
+    \textbf{Total:}
+    \[
+      80 \times 268\,\text{MB} \approx 21.4\,\text{GB per request}
+    \]
+    \textbf{Reduction with GQA (8 KV heads vs 64 Q heads):}
+    \[
+      21.4\,\text{GB} \times (8/64) \approx 1.2\,\text{GB per request}
+    \]
+    Grouped-Query Attention reduces KV cache by the Q:KV head ratio,
+    enabling higher batch sizes at the same GPU memory budget.
+  \end{WorkedExample}
+\end{frame}
+
+\end{document}

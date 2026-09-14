@@ -5,6 +5,8 @@
 
 \newif\ifBayesScience
 \DeclareOption{science}{\BayesSciencetrue}
+\newif\ifBayesDebugOpt
+\DeclareOption{debug}{\BayesDebugOpttrue}
 \ProcessOptions\relax
 
 \RequirePackage{iftex}
@@ -597,3 +599,16 @@
   \begin{frame}{Author Handoff}\begin{itemize}\item Replace this orientation topic with approved learning objectives, examples, assessments and references.\item Add further topics to this session before learner release.\item Build the topic for authoring, then the session and course for review.\end{itemize}\end{frame}%
 }
 \let\ContentPendingConcept\ContentPendingTopic
+
+% -------------------------------------------------------------------------
+% Extension Modules
+%   bayesstackgeometry — named geometry lengths, gap tokens, canvas environments
+%   bayesstacklayouts  — FigureExplain, ExplainFigure, SlideTwo/Three/Fill/Caption
+%   bayesstackdebug    — layout guides, overflow checker (\BayesOverflowCheck)
+%
+%   Load order matters: geometry must precede debug (debug references its lengths).
+% -------------------------------------------------------------------------
+\RequirePackage{bayesstackgeometry}
+\RequirePackage{bayesstacklayouts}
+\RequirePackage{bayesstackdebug}
+\ifBayesDebugOpt\BayesDebugOn\fi

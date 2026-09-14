@@ -1,0 +1,67 @@
+% bayesstacklayouts.sty — Author-facing slide layout helpers.
+% Loaded by bayesstackslides.sty; do not load directly.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bayesstacklayouts}[2026/09/14 BayesStack slide layout helpers]
+
+% -------------------------------------------------------------------------
+% Figure + Explanation Layouts
+%   These replace raw \begin{columns}...\end{columns} for the most common
+%   figure-beside-text pattern. The optional argument is the FIGURE column
+%   width as a fraction of \textwidth (default 0.52).
+%
+%   \FigureExplain[ratio]{figure-content}{explanation-content}
+%   \ExplainFigure[ratio]{explanation-content}{figure-content}
+%
+%   The complementary column width is computed automatically. A 2mm gutter
+%   between columns is accounted for.
+%
+%   Example:
+%     \FigureExplain[.55]{%
+%       \includegraphics[width=\linewidth]{diagram.png}%
+%     }{%
+%       \begin{InsightCard}{Key observation}
+%         The peak at 6.1 is the posterior mode.
+%       \end{InsightCard}
+%     }
+% -------------------------------------------------------------------------
+\newcommand{\FigureExplain}[3][.52]{%
+  \begin{columns}[T,onlytextwidth]%
+    \begin{column}{#1\textwidth}#2\end{column}%
+    \hfill%
+    \begin{column}{\dimexpr(1\textwidth-#1\textwidth-2mm)\relax}#3\end{column}%
+  \end{columns}%
+}
+
+\newcommand{\ExplainFigure}[3][.52]{%
+  \begin{columns}[T,onlytextwidth]%
+    \begin{column}{\dimexpr(1\textwidth-#1\textwidth-2mm)\relax}#2\end{column}%
+    \hfill%
+    \begin{column}{#1\textwidth}#3\end{column}%
+  \end{columns}%
+}
+
+% -------------------------------------------------------------------------
+% Vertical Composition Helpers
+%   Structured alternatives to bare \vspace{} between components.
+%
+%   \SlideTwo{top}{bottom}
+%     Two stacked components with a standard \BayesGap between them.
+%     Most common pattern for a card + takeaway or equation + insight.
+%
+%   \SlideThree{a}{b}{c}
+%     Three stacked components, each separated by \BayesGap.
+%     Use for: goals + equation + takeaway patterns.
+%
+%   \SlideFill{top}{bottom}
+%     Two stacked components with \vfill between them.
+%     Bottom component is pushed to the foot of the content area.
+%     Use for: main-content + caption or main-content + attribution.
+%
+%   \SlideCaption{main}{caption-text}
+%     Convenience wrapper for the common "figure/diagram + caption at foot"
+%     pattern. Caption is rendered with \BayesCaption styling.
+% -------------------------------------------------------------------------
+\newcommand{\SlideTwo}[2]{#1\BayesGap#2}
+\newcommand{\SlideThree}[3]{#1\BayesGap#2\BayesGap#3}
+\newcommand{\SlideFill}[2]{#1\vfill#2}
+\newcommand{\SlideCaption}[2]{#1\vfill\BayesCaption{#2}}
