@@ -1,0 +1,18 @@
+% Shared reference deck. Course folders use content-only files; this wrapper
+% demonstrates how the central platform assembles them.
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage{import}
+\usepackage[science]{bayesstackslides}
+\CourseMetadata{SAMPLE 101}{Bayesian reasoning for data science}{In-class slide decks}
+\author{BayesStack}
+\date{}
+
+\begin{document}
+\BayesCourseTitleSlide{Bayesian reasoning for data science}{Reference deck for the shared slide platform}
+\CourseSessionMapSlide{
+  \SessionEntry{01}{Bayesian inference}{Represent a belief, observe evidence and update coherently.}
+  \SessionEntry{02}{Decision-making}{Use posterior uncertainty to choose an action deliberately.}
+}
+\import{decks/session-01-bayesian-inference/}{session-01-bayesian-inference-content.tex}
+\import{decks/session-02-decision-making/}{session-02-decision-making-content.tex}
+\end{document}

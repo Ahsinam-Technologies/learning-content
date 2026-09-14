@@ -1,0 +1,35 @@
+\TopicDivider{02}{Evidence updates beliefs}{Make the assumptions, data transformation and decision boundary inspectable.}
+
+\begin{frame}[fragile]{A small update should still be reproducible}
+  \begin{HighlightedCodeBlock}[numbers=left]{Python}{4,5,6}
+prior_alpha, prior_beta = 2, 2
+successes, failures = 8, 3
+
+posterior_alpha = prior_alpha + successes
+posterior_beta = prior_beta + failures
+posterior_mean = posterior_alpha / (posterior_alpha + posterior_beta)
+  \end{HighlightedCodeBlock}
+  \Citation{The code is short because the model assumption is strong: independent Bernoulli observations and a Beta prior.}
+\end{frame}
+
+\begin{frame}[fragile]{Tie the code to the teaching point}
+  \CodeFromFileWithCallout{Python}{assets/code/beta_update.py}{4,5,6}
+    {Update, then decide}{Lines 4--6 combine the prior with observed evidence. The decision rule stays explicit so it can be reviewed separately from the probability model.}
+\end{frame}
+
+\begin{frame}{A traceable update has a stable shape}
+  \centering
+  \begin{tikzpicture}[node distance=1.0cm]
+    \node[bayes/data] (prior) {prior\\assumption};
+    \node[bayes/data,right=of prior] (data) {observed\\evidence};
+    \node[bayes/model,right=of data] (posterior) {posterior\\distribution};
+    \node[bayes/node,right=of posterior] (decision) {decision\\policy};
+    \draw[bayes/flow] (prior) -- (posterior);
+    \draw[bayes/flow] (data) -- (posterior);
+    \draw[bayes/flow] (posterior) -- (decision);
+  \end{tikzpicture}
+  \vspace{.34cm}
+  \begin{ExerciseCard}{Discuss}
+    Which box changes if the observations are no longer independent? Which box changes if the cost of an incorrect decision changes?
+  \end{ExerciseCard}
+\end{frame}

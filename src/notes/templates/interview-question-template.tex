@@ -1,0 +1,48 @@
+% Save in sections/ as section-XX-interview-questions-content.tex or copy into an interview chapter.
+% This fragment is shared by the chapter and assembled course notes.
+% Do not compile directly.
+\section{Interview Practice: [Question Topic]}
+
+\begin{interviewbox}[1. Exact Interviewer Question Wording]
+State the technical interview question clearly, exactly as an interviewer at a top-tier tech firm or quantitative trading desk would pose it.
+\end{interviewbox}
+
+\subsection*{2. What the Interviewer is Really Testing}
+State the fundamental principles, engineering tradeoffs, computational invariants, and candidate judgment being evaluated.
+
+\subsection*{3. How to Think Out Loud}
+Outline the structured sequence of clarifying questions, boundary assumptions, scale/dimension checks, and candidate hypotheses to verbalize before jumping into code or derivation.
+
+\begin{assumptionbox}[Key Boundary Conditions and Operating Assumptions]
+List the critical operational assumptions (e.g., stationary distribution, i.i.d. observations, memory budget, bounded latency, loss convexity).
+\end{assumptionbox}
+
+\subsection*{4. First-Principles Technical Answer}
+Develop the complete technical solution from foundational principles, proving why the method works rather than relying on heuristics.
+
+\begin{numericalexample}{[Example / Step-by-Step Numerical Walkthrough]}
+Provide a concrete numerical or algorithmic instance with exact intermediate steps to demonstrate applied mastery:
+\[
+  \text{Posterior} \propto \text{Likelihood} \times \text{Prior}
+\]
+\end{numericalexample}
+
+\physicalmeaning{Explain the operational or physical intuition behind the numerical result and how parameter changes affect system behavior.}
+
+\begin{mistakebox}[Common Traps and Pitfalls]
+Identify common reasoning errors, subtle bugs, edge case oversights, and interview candidate missteps.
+\end{mistakebox}
+
+\begin{shortcutbox}[60-to-90 Second Spoken Summary]
+Deliver the concise, high-signal elevator pitch answer suitable for verbal delivery without rambling or sounding memorized.
+\end{shortcutbox}
+
+\begin{variantbox}[Variants, Extensions, and Edge Cases]
+Explain how the answer adapts when constraints change (e.g., streaming data vs. batch, high dimensionality, extreme sparsity, non-convex objectives).
+\end{variantbox}
+
+\begin{groundrealitybox}[Production & Hardware Reality Check]
+Describe what happens when deploying to real hardware: cache locality, numerical stability (e.g., log-space computations), distributed communication overhead, or monitoring drift.
+\end{groundrealitybox}
+
+\sourcesnote{Provide authoritative textbook, paper, or production system references.}

@@ -1,0 +1,71 @@
+\section{Conjugate Updating and Computational Mechanics}
+
+When prior distributions belong to a family that, when multiplied by the likelihood, yields a posterior in the same functional family, the prior and likelihood are said to be \emph{conjugate}. Conjugacy allows exact analytical calculation without resorting to expensive Markov Chain Monte Carlo (MCMC) simulations.
+
+\subsection{The Beta-Binomial Update Engine}
+
+Consider a Bernoulli experiment observed \(n\) times with \(k\) successes. The likelihood is binomial:
+\[
+  p(k \mid \theta) = \binom{n}{k} \theta^k (1 - \theta)^{n - k}
+\]
+Placing a Beta prior on \(\theta \in [0, 1]\) with hyper-parameters \(\alpha_0, \beta_0 > 0\):
+\[
+  p(\theta) = \frac{\Gamma(\alpha_0 + \beta_0)}{\Gamma(\alpha_0)\Gamma(\beta_0)} \theta^{\alpha_0 - 1} (1 - \theta)^{\beta_0 - 1}
+\]
+Multiplying prior by likelihood yields the posterior kernel:
+\[
+  p(\theta \mid k) \propto \theta^{(\alpha_0 + k) - 1} (1 - \theta)^{(\beta_0 + n - k) - 1}
+\]
+Recognizing the functional form immediately identifies the posterior as:
+\[
+  \theta \mid k \sim \text{Beta}(\alpha_0 + k, \, \beta_0 + n - k)
+\]
+
+\begin{ExampleBox}{A/B Conversion Testing}
+  Suppose a digital marketing system has a prior belief on click-through rate parameterized by \(\text{Beta}(2, 2)\). An in-market experiment runs across \(n = 100\) impressions and registers \(k = 18\) clicks.
+  
+  The updated parameters are:
+  \[
+    \alpha_{\text{post}} = 2 + 18 = 20, \quad \beta_{\text{post}} = 2 + 82 = 84
+  \]
+  The posterior expectation is:
+  \[
+    \mathbb{E}[\theta \mid k] = \frac{20}{20 + 84} = \frac{20}{104} \approx 0.1923
+  \]
+  Prior mean was \(0.50\), but the substantial evidence swiftly shifts mass toward the empirical rate of \(0.18\).
+\end{ExampleBox}
+
+\subsection{Algorithmic Implementation}
+
+In production pipelines, Bayesian updates run as reproducible stateful functions:
+
+\begin{HighlightedCodeBlock}[numbers=left]{Python}{4,5,6}
+def update_beta_binomial(alpha_prior, beta_prior, n, k):
+    """Computes exact conjugate posterior hyper-parameters."""
+    alpha_post = alpha_prior + k
+    beta_post = beta_prior + (n - k)
+    mean_post = alpha_post / (alpha_post + beta_post)
+    var_post = (alpha_post * beta_post) / (
+        (alpha_post + beta_post)**2 * (alpha_post + beta_post + 1)
+    )
+    return alpha_post, beta_post, mean_post, var_post
+\end{HighlightedCodeBlock}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=0.8cm, auto]
+    \node[bayes/data] (prior) {\small Prior\\$\text{Beta}(\alpha_0, \beta_0)$};
+    \node[bayes/data, right=1.2cm of prior] (data) {\small Observations\\$(n, k)$};
+    \node[bayes/model, below=1.0cm of $(prior)!0.5!(data)$] (post) {\small Posterior\\$\text{Beta}(\alpha_n, \beta_n)$};
+    \node[bayes/node, below=0.8cm of post] (decision) {\small Decision Policy};
+
+    \draw[bayes/flow] (prior) -- (post);
+    \draw[bayes/flow] (data) -- (post);
+    \draw[bayes/flow] (post) -- (decision);
+  \end{tikzpicture}
+  \caption{Traceable computational flow from prior belief and evidence to decision boundary.}
+\end{figure}
+
+\begin{SummaryBox}{Variance Contraction}
+  As the number of observed samples \(n \to \infty\), the variance of the posterior contracts at the rate \(\mathcal{O}(1/n)\). Epistemic uncertainty vanishes, and the posterior converges to a Dirac delta distribution centered on the true data-generating parameter.
+\end{SummaryBox}

@@ -1,0 +1,384 @@
+% bayesstackslides.sty — shared lecture-slide system for BayesStack courses.
+% Individual courses own learning content; this package owns visual and teaching patterns.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bayesstackslides}[2026/09/14 Shared BayesStack lecture slides]
+
+\newif\ifBayesScience
+\DeclareOption{science}{\BayesSciencetrue}
+\ProcessOptions\relax
+
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[scaled=.96]{helvet}
+\else
+  \RequirePackage{fontspec}
+  % Fonts are versioned TTF assets in src/core/fonts (with fallbacks).
+  \IfFileExists{src/core/fonts/Inter-Regular.ttf}{%
+    \setsansfont[Path=src/core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+  }{%
+    \IfFileExists{core/fonts/Inter-Regular.ttf}{%
+      \setsansfont[Path=core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+    }{%
+      \IfFileExists{_common_/fonts/Inter-Regular.ttf}{%
+        \setsansfont[Path=_common_/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+      }{%
+        \IfFileExists{fonts/Inter-Regular.ttf}{%
+          \setsansfont[Path=fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+        }{\IfFontExistsTF{Inter}{\setsansfont{Inter}}{\setsansfont{TeX Gyre Heros}}}
+      }%
+    }%
+  }
+  \IfFileExists{src/core/fonts/Outfit-Regular.ttf}{%
+    \newfontfamily\BayesDisplayFont[Path=src/core/fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+  }{%
+    \IfFileExists{core/fonts/Outfit-Regular.ttf}{%
+      \newfontfamily\BayesDisplayFont[Path=core/fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+    }{%
+      \IfFileExists{_common_/fonts/Outfit-Regular.ttf}{%
+        \newfontfamily\BayesDisplayFont[Path=_common_/fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+      }{%
+        \IfFileExists{fonts/Outfit-Regular.ttf}{%
+          \newfontfamily\BayesDisplayFont[Path=fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+        }{\IfFontExistsTF{Outfit}{\newfontfamily\BayesDisplayFont{Outfit}}{\newfontfamily\BayesDisplayFont{TeX Gyre Heros}}}
+      }%
+    }%
+  }
+\fi
+\ifPDFTeX\newcommand\BayesDisplayFont{\sffamily}\fi
+\RequirePackage{microtype}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+\RequirePackage{tabularx}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\RequirePackage{tcolorbox}
+\RequirePackage{environ}
+\RequirePackage{listings}
+\RequirePackage{etoolbox}
+\RequirePackage{overpic}
+\RequirePackage{currfile}
+\RequirePackage{hyperref}
+\ifBayesScience
+  \RequirePackage{siunitx}
+  \RequirePackage{physics}
+  \RequirePackage[version=4]{mhchem}
+  \RequirePackage{chemfig}
+  \RequirePackage{circuitikz}
+  \RequirePackage{tikz-3dplot}
+  \RequirePackage{braket}
+  \RequirePackage{quantikz}
+\fi
+
+\usetikzlibrary{arrows.meta,backgrounds,calc,decorations.pathreplacing,positioning,shapes.geometric}
+\pgfplotsset{compat=1.18}
+\ifBayesScience\sisetup{detect-all,output-decimal-marker={.}}\fi
+\tcbuselibrary{skins}
+
+% UI-aligned palette from _assets_/style.md.
+\definecolor{BayesTeal}{HTML}{0B6763}
+\definecolor{BayesBrandTeal}{HTML}{056766}
+\definecolor{BayesDeepTeal}{HTML}{084C49}
+\definecolor{BayesDark}{HTML}{091A18}
+\definecolor{BayesInk}{HTML}{123333}
+\definecolor{BayesSecondary}{HTML}{4A6360}
+\definecolor{BayesMuted}{HTML}{59716E}
+\definecolor{BayesBorder}{HTML}{D7E8E4}
+\definecolor{BayesPale}{HTML}{E4F2EF}
+\definecolor{BayesCanvas}{HTML}{F1F8F6}
+\definecolor{BayesSurface}{HTML}{FFFFFF}
+\definecolor{BayesCode}{HTML}{F0F7F6}
+\definecolor{BayesCodeHighlight}{HTML}{D9EFEB}
+\definecolor{BayesAmber}{HTML}{9A6700}
+\definecolor{BayesBlue}{HTML}{2368A2}
+\definecolor{BayesPlum}{HTML}{7357A3}
+
+\hypersetup{colorlinks=true,urlcolor=BayesTeal,linkcolor=BayesTeal,citecolor=BayesTeal}
+\renewcommand{\familydefault}{\sfdefault}
+\setlength{\parskip}{.36em}
+\setlength{\parindent}{0pt}
+\setbeamersize{text margin left=.78cm,text margin right=.78cm}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\raise.14ex\hbox{\tiny\textcolor{BayesTeal}{\textbullet}}}
+\setbeamertemplate{itemize subitem}{\raise.14ex\hbox{\scriptsize\textcolor{BayesMuted}{\textbullet}}}
+\setbeamertemplate{enumerate item}{\color{BayesTeal}\insertenumlabel.}
+\setbeamertemplate{caption}[numbered]
+\setbeamercolor{normal text}{fg=BayesInk,bg=BayesCanvas}
+\setbeamercolor{frametitle}{fg=BayesInk,bg=BayesCanvas}
+\ifPDFTeX
+  \setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\else
+  \setbeamerfont{frametitle}{family=\BayesDisplayFont,series=\bfseries,size=\Large}
+\fi
+\setbeamerfont{normal text}{size=\normalsize}
+\setbeamerfont{caption}{size=\scriptsize}
+\setbeamercolor{caption name}{fg=BayesSecondary}
+
+% Course metadata lives in the parent preamble so chapter and concept subfiles inherit it.
+\newcommand{\BayesCourseCode}{}
+\newcommand{\BayesCourseName}{}
+\newcommand{\BayesDeckScope}{}
+\newcommand{\CourseMetadata}[3]{\gdef\BayesCourseCode{#1}\gdef\BayesCourseName{#2}\gdef\BayesDeckScope{#3}}
+% Capture the directory of a shared content fragment before Beamer serialises a
+% fragile frame. This lets local assets retain the same short path in every build.
+\newcommand{\BayesAssetRoot}{}
+\newcommand{\BayesCaptureAssetRoot}{\xdef\BayesAssetRoot{\currfiledir}}
+\newcommand{\BayesAssetPath}[1]{\BayesAssetRoot#1}
+\newcommand{\BayesStackWordmark}{{\fontsize{13}{14}\selectfont\bfseries\textcolor{BayesTeal}{BayesStack}}}
+\newcommand{\BayesStackMark}{\IfFileExists{bayesstack_logo_black_2048.png}{\raisebox{-.13cm}{\includegraphics[height=.38cm]{bayesstack_logo_black_2048.png}}\hspace{.13cm}}{}\BayesStackWordmark}
+
+\setbeamertemplate{frametitle}{%
+  \vspace{.16cm}\makebox[\textwidth][r]{\scriptsize\color{BayesMuted}\BayesCourseCode\ifstrempty{\BayesDeckScope}{}{\enspace/\enspace\BayesDeckScope}}\par
+  \vspace{.03cm}\strut\insertframetitle\par
+  \vspace{.10cm}\textcolor{BayesTeal}{\rule{.90cm}{1.35pt}}\textcolor{BayesBorder}{\rule{\dimexpr\textwidth-.90cm\relax}{.35pt}}\vspace{-.04cm}
+}
+\setbeamertemplate{footline}{%
+  \leavevmode\hbox{%
+    \begin{beamercolorbox}[wd=.78\paperwidth,ht=.35cm,dp=.13cm,leftskip=.78cm]{author in head/foot}%
+      \scriptsize\color{BayesMuted}\BayesCourseName
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.22\paperwidth,ht=.35cm,dp=.13cm,rightskip=.78cm plus1fill]{date in head/foot}%
+      \scriptsize\color{BayesMuted}\insertframenumber\,/\,\inserttotalframenumber\hfill\BayesStackWordmark
+    \end{beamercolorbox}%
+  }\vskip.14cm%
+}
+
+\setbeamercolor{title page}{bg=BayesCanvas}
+\setbeamertemplate{title page}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=\paperheight,sep=0pt]{title page}%
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[BayesPale] ([xshift=11.55cm]current page.north west) rectangle (current page.south east);
+      \draw[BayesBorder,line width=.45pt] ([xshift=12.15cm,yshift=-.78cm]current page.north west) -- ([xshift=12.15cm,yshift=-6.85cm]current page.north west);
+      \fill[BayesTeal] ([xshift=12.15cm,yshift=-6.81cm]current page.north west) rectangle ([xshift=15.45cm,yshift=-6.86cm]current page.north west);
+      \fill[BayesTeal] ([xshift=13.15cm,yshift=-2.10cm]current page.north west) circle (.08cm);
+      \draw[BayesTeal!55!BayesPale,line width=.8pt] ([xshift=14.35cm,yshift=-3.55cm]current page.north west) circle (.35cm);
+    \end{tikzpicture}%
+    \vspace*{.66cm}\hspace*{.78cm}\BayesStackMark
+    \vfill
+    \hspace*{.78cm}{\color{BayesTeal}\rule{1.10cm}{2.1pt}}\par\vspace{.30cm}
+    \hspace*{.78cm}\begin{minipage}{.65\paperwidth}\raggedright
+      {\BayesDisplayFont\fontsize{25}{30}\selectfont\bfseries\color{BayesInk}\inserttitle\par}
+      \vspace{.30cm}{\large\color{BayesSecondary}\insertsubtitle\par}
+      \vspace{.42cm}{\small\color{BayesTeal}\BayesCourseCode\par}
+    \end{minipage}
+    \vfill
+    \hspace*{.78cm}\vspace*{.66cm}
+  \end{beamercolorbox}%
+}
+\newcommand{\BayesCourseTitleSlide}[2]{\title{#1}\subtitle{#2}\begin{frame}[plain]\titlepage\end{frame}}
+
+% University hierarchy for decks: course -> session -> topic.
+\newcommand{\SessionEntry}[3]{\item[]\textcolor{BayesTeal}{\bfseries #1}\hspace{.35em}\textbf{#2}\par\scriptsize\color{BayesSecondary}#3\normalsize\vspace{.26cm}}
+\newcommand{\TopicEntry}[3]{\item[]\textcolor{BayesTeal}{\bfseries #1}\hspace{.35em}\textbf{#2}\par\scriptsize\color{BayesSecondary}#3\normalsize\vspace{.26cm}}
+\newcommand{\CourseSessionMapSlide}[1]{%
+  \begin{frame}{Course roadmap}\small\begin{enumerate}\setlength{\itemsep}{.17cm}#1\end{enumerate}\vfill\BayesCaption{Each in-class session assembles focused learning topics.}\end{frame}%
+}
+\newcommand{\SessionTopicMapSlide}[1]{%
+  \begin{frame}{Session agenda}\small\begin{enumerate}\setlength{\itemsep}{.17cm}#1\end{enumerate}\vfill\BayesCaption{Topic units assemble the in-class learning flow.}\end{frame}%
+}
+\newcommand{\SessionDivider}[3]{%
+  \BayesCaptureAssetRoot
+  {\setbeamercolor{background canvas}{bg=BayesDark}%
+  \begin{frame}[plain]
+    \vspace*{.72cm}\hspace*{.78cm}{\color{BayesPale}\bfseries\large SESSION\enspace#1}\par
+    \vfill\hspace*{.78cm}\begin{minipage}{.76\paperwidth}\raggedright
+      {\BayesDisplayFont\fontsize{29}{34}\selectfont\bfseries\color{white}#2\par}\vspace{.26cm}
+      {\large\color{BayesBorder}#3\par}
+    \end{minipage}\vfill
+    \hspace*{.78cm}{\scriptsize\color{BayesPale}\BayesCourseCode}\vspace*{.58cm}
+  \end{frame}}%
+}
+\newcommand{\TopicDivider}[3]{%
+  \BayesCaptureAssetRoot
+  {\setbeamercolor{background canvas}{bg=BayesPale}%
+  \begin{frame}[plain]
+    \vspace*{.82cm}\hspace*{.78cm}{\color{BayesTeal}\bfseries\large TOPIC\enspace#1}\par
+    \vfill\hspace*{.78cm}\begin{minipage}{.76\paperwidth}\raggedright
+      {\BayesDisplayFont\fontsize{28}{33}\selectfont\bfseries\color{BayesInk}#2\par}\vspace{.24cm}
+      {\large\color{BayesSecondary}#3\par}
+    \end{minipage}\vfill
+    \hspace*{.78cm}{\color{BayesTeal}\rule{1.10cm}{2pt}}\vspace*{.68cm}
+  \end{frame}}%
+}
+\newcommand{\SessionStandaloneTitle}[3]{%
+  \ifSubfilesClassLoaded{\title{#2}\subtitle{#3}\gdef\BayesDeckScope{Session #1}\begin{frame}[plain]\titlepage\end{frame}}{}%
+}
+\newcommand{\TopicStandaloneTitle}[3]{%
+  \ifSubfilesClassLoaded{\title{#2}\subtitle{#3}\gdef\BayesDeckScope{Topic #1}\begin{frame}[plain]\titlepage\end{frame}}{}%
+}
+
+% Legacy Chapter and Concept compatibility aliases
+\let\ChapterEntry\SessionEntry
+\let\ConceptEntry\TopicEntry
+\let\CourseChapterMapSlide\CourseSessionMapSlide
+\let\ChapterConceptMapSlide\SessionTopicMapSlide
+\newcommand{\ChapterDivider}[3]{%
+  \BayesCaptureAssetRoot
+  {\setbeamercolor{background canvas}{bg=BayesDark}%
+  \begin{frame}[plain]
+    \vspace*{.72cm}\hspace*{.78cm}{\color{BayesPale}\bfseries\large CHAPTER\enspace#1}\par
+    \vfill\hspace*{.78cm}\begin{minipage}{.76\paperwidth}\raggedright
+      {\BayesDisplayFont\fontsize{29}{34}\selectfont\bfseries\color{white}#2\par}\vspace{.26cm}
+      {\large\color{BayesBorder}#3\par}
+    \end{minipage}\vfill
+    \hspace*{.78cm}{\scriptsize\color{BayesPale}\BayesCourseCode}\vspace*{.58cm}
+  \end{frame}}%
+}
+\newcommand{\ConceptDivider}[3]{%
+  \BayesCaptureAssetRoot
+  {\setbeamercolor{background canvas}{bg=BayesPale}%
+  \begin{frame}[plain]
+    \vspace*{.82cm}\hspace*{.78cm}{\color{BayesTeal}\bfseries\large CONCEPT\enspace#1}\par
+    \vfill\hspace*{.78cm}\begin{minipage}{.76\paperwidth}\raggedright
+      {\BayesDisplayFont\fontsize{28}{33}\selectfont\bfseries\color{BayesInk}#2\par}\vspace{.24cm}
+      {\large\color{BayesSecondary}#3\par}
+    \end{minipage}\vfill
+    \hspace*{.78cm}{\color{BayesTeal}\rule{1.10cm}{2pt}}\vspace*{.68cm}
+  \end{frame}}%
+}
+\newcommand{\ChapterStandaloneTitle}[3]{%
+  \ifSubfilesClassLoaded{\title{#2}\subtitle{#3}\gdef\BayesDeckScope{Chapter #1}\begin{frame}[plain]\titlepage\end{frame}}{}%
+}
+\newcommand{\ConceptStandaloneTitle}[3]{%
+  \ifSubfilesClassLoaded{\title{#2}\subtitle{#3}\gdef\BayesDeckScope{Concept #1}\begin{frame}[plain]\titlepage\end{frame}}{}%
+}
+
+% Teaching patterns. Names convey intent so authors do not recreate visual choices.
+\newtcolorbox{BayesBaseBox}[2][]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,left=3.4mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesInk,title={#2},#1}
+\newtcolorbox{LearningGoals}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesPale,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesTeal},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesInk,title={#1}}
+\newtcolorbox{DefinitionCard}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesBlue},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesBlue,title={Definition\enspace--\enspace#1}}
+\newtcolorbox{InsightCard}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesTeal},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesTeal,title={#1}}
+\newtcolorbox{WorkedExample}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesPlum},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesPlum,title={Worked example\enspace--\enspace#1}}
+\newtcolorbox{CautionCard}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesAmber},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesAmber,title={Watch for\enspace--\enspace#1}}
+\newtcolorbox{ExerciseCard}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesPale,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesTeal},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesTeal,title={Try it\enspace--\enspace#1}}
+\newtcolorbox{ProofSketch}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesDark},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesInk,title={Proof sketch\enspace--\enspace#1}}
+\newtcolorbox{KeyTakeaway}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesPale,colframe=BayesTeal!45!BayesPale,borderline west={2.3pt}{0pt}{BayesTeal},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesTeal,title={Key takeaway\enspace--\enspace#1}}
+\newtcolorbox{ScientificFigure}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesSurface,colframe=BayesBorder,left=3.4mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesInk,title={#1}}
+\newcommand{\BayesCaption}[1]{{\scriptsize\color{BayesMuted}#1}}
+\newcommand{\BayesUnit}[2]{#1\,#2}
+\ifBayesScience\renewcommand{\BayesUnit}[2]{\SI{#1}{#2}}\fi
+
+\newcommand{\TwoPane}[2]{%
+  \begin{columns}[T,onlytextwidth]\begin{column}{.485\textwidth}#1\end{column}\begin{column}{.485\textwidth}#2\end{column}\end{columns}%
+}
+\NewEnviron{BayesTable}[1]{\renewcommand{\arraystretch}{1.25}\small\rowcolors{2}{BayesPale!55!white}{white}\begin{tabularx}{\linewidth}{#1}\BODY\end{tabularx}}
+\newcommand{\BayesTableHeader}{\rowcolor{BayesDeepTeal}}
+\newcommand{\BayesTableHead}[1]{\color{white}\bfseries #1}
+\newcommand{\BayesEquation}[1]{\begin{center}\begin{tcolorbox}[arc=2mm,boxrule=.45pt,colback=BayesPale,colframe=BayesBorder,width=.86\linewidth]\centering\large\(\displaystyle #1\)\end{tcolorbox}\end{center}}
+
+% Visual assets are constrained by default so they remain legible in a Beamer frame.
+\newcommand{\DeckImage}[3][]{%
+  \begin{figure}\centering
+    \includegraphics[width=\linewidth,height=.59\textheight,keepaspectratio,#1]{\BayesAssetPath{#2}}%
+    \ifstrempty{#3}{}{\caption{#3}}%
+  \end{figure}%
+}
+\newcommand{\SideBySideFigures}[5][]{%
+  \begin{figure}\centering
+    \begin{minipage}[t]{.485\linewidth}\centering\includegraphics[width=\linewidth,height=.48\textheight,keepaspectratio,#1]{\BayesAssetPath{#2}}\\[-1mm]\scriptsize\color{BayesMuted}#3\end{minipage}\hfill
+    \begin{minipage}[t]{.485\linewidth}\centering\includegraphics[width=\linewidth,height=.48\textheight,keepaspectratio,#1]{\BayesAssetPath{#4}}\\[-1mm]\scriptsize\color{BayesMuted}#5\end{minipage}
+  \end{figure}%
+}
+% Use percentages inside this environment: \ScreenshotCallout{65}{68}{Select model}.
+\newenvironment{AnnotatedScreenshot}[2]{%
+  \begin{figure}\centering\def\BayesScreenshotCaption{#2}%
+  \begin{overpic}[width=\linewidth,height=.58\textheight,keepaspectratio]{\BayesAssetPath{#1}}%
+}{%
+  \end{overpic}\ifstrempty{\BayesScreenshotCaption}{}{\caption{\BayesScreenshotCaption}}\end{figure}%
+}
+\newcommand{\ScreenshotCallout}[3]{\put(#1,#2){\makebox(0,0)[l]{\colorbox{BayesTeal}{\scriptsize\color{white}\strut\hspace{1.4mm}#3\hspace{1.4mm}}}}}
+
+% Source-safe code blocks; no shell escape is required.
+\makeatletter
+\lst@Key{numbers}{none}{%
+  \def\lst@PlaceNumber{\lst@linebgrd}%
+  \lstKV@SwitchCases{#1}{%
+    none:\\%
+    left:\def\lst@PlaceNumber{\llap{\normalfont\lst@numberstyle{\thelstnumber}\kern\lst@numbersep}\lst@linebgrd}\\%
+    right:\def\lst@PlaceNumber{\rlap{\normalfont\kern\linewidth\kern\lst@numbersep\lst@numberstyle{\thelstnumber}}\lst@linebgrd}%
+  }{\PackageError{Listings}{Numbers #1 unknown}\@ehc}}%
+\lst@Key{linebackgroundcolor}{}{\def\lst@linebgrdcolor{#1}}
+\lst@Key{linebackgroundsep}{0pt}{\def\lst@linebgrdsep{#1}}
+\lst@Key{linebackgroundwidth}{\linewidth}{\def\lst@linebgrdwidth{#1}}
+\lst@Key{linebackgroundheight}{\ht\strutbox}{\def\lst@linebgrdheight{#1}}
+\lst@Key{linebackgrounddepth}{\dp\strutbox}{\def\lst@linebgrddepth{#1}}
+\lst@Key{linebackgroundcmd}{\color@block}{\def\lst@linebgrdcmd{#1}}
+\newcommand{\lst@linebgrd}{\ifx\lst@linebgrdcolor\empty\else\rlap{\lst@basicstyle\color{-.}\lst@linebgrdcolor{\kern-\dimexpr\lst@linebgrdsep\relax\lst@linebgrdcmd{\lst@linebgrdwidth}{\lst@linebgrdheight}{\lst@linebgrddepth}}}\fi}
+\makeatother
+\lstdefinelanguage{JSON}{morestring=[b]",morecomment=[l]{//},morekeywords={true,false,null}}
+\lstdefinelanguage{YAML}{sensitive=false,morecomment=[l]{\#},morestring=[b]",morekeywords={true,false,yes,no,null}}
+\lstdefinestyle{BayesCode}{%
+  backgroundcolor=\color{BayesCode},basicstyle=\ttfamily\scriptsize\color{BayesInk},
+  commentstyle=\color{BayesMuted},keywordstyle=\bfseries\color{BayesTeal},stringstyle=\color{BayesPlum},
+  frame=single,framerule=.35pt,rulecolor=\color{BayesBorder},framesep=4pt,
+  breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2,
+  numbers=left,numberstyle=\tiny\color{BayesMuted},numbersep=6pt,linebackgroundcolor={\BayesLineBackground}}
+\newcommand{\BayesHighlightedLines}{}
+\makeatletter
+\newcommand{\BayesLineBackground}{\color{BayesCode}\def\BayesLineMatch{0}\@for\BayesLineCandidate:=\BayesHighlightedLines\do{\ifnum\value{lstnumber}=\BayesLineCandidate\relax\def\BayesLineMatch{1}\fi}\ifnum\BayesLineMatch=1\color{BayesCodeHighlight}\fi}
+\makeatother
+\lstnewenvironment{CodeBlock}[2][]{\lstset{style=BayesCode,language=#2,#1}}{}
+\lstnewenvironment{HighlightedCodeBlock}[3][]{\gdef\BayesHighlightedLines{#3}\lstset{style=BayesCode,language=#2,#1}}{\gdef\BayesHighlightedLines{}}
+\newcommand{\InlineCode}[1]{{\ttfamily\small\color{BayesTeal}#1}}
+\newtcolorbox{CodeCallout}[1]{enhanced,arc=2mm,boxrule=.45pt,
+  colback=BayesPale,colframe=BayesBorder,borderline west={2.3pt}{0pt}{BayesTeal},left=4.0mm,right=3.4mm,top=2.4mm,bottom=2.4mm,
+  fonttitle=\bfseries,coltitle=BayesTeal,title={#1}}
+% Keep longer snippets in a local asset file while retaining line-level teaching context.
+% \CodeFromFileWithCallout[listing options]{language}{file}{highlighted lines}{title}{explanation}
+\newcommand{\CodeFromFileWithCallout}[6][]{%
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.61\textwidth}\begingroup\gdef\BayesHighlightedLines{#4}\lstinputlisting[style=BayesCode,language=#2,numbers=left,#1]{\BayesAssetPath{#3}}\endgroup\end{column}
+    \begin{column}{.35\textwidth}\begin{CodeCallout}{#5}#6\end{CodeCallout}\end{column}
+  \end{columns}%
+}
+
+% Reusable diagram and scientific-plot primitives.
+\tikzset{
+  bayes/node/.style={rounded corners=2mm,draw=BayesBorder,fill=BayesSurface,very thick,minimum width=2.05cm,minimum height=.72cm,align=center,font=\small\bfseries\color{BayesInk}},
+  bayes/data/.style={bayes/node,fill=BayesPale,draw=BayesTeal!42!BayesPale},
+  bayes/model/.style={bayes/node,fill=BayesBlue!7!white,draw=BayesBlue!38!white},
+  bayes/flow/.style={-{Latex[length=1.8mm]},very thick,draw=BayesSecondary},
+  bayes/accent/.style={rounded corners=1.2mm,fill=BayesTeal,text=white,font=\scriptsize\bfseries,inner xsep=2.2mm,inner ysep=1.2mm},
+  bayes/measurement/.style={-{Latex[length=1.5mm]}-{Latex[length=1.5mm]},draw=BayesTeal,very thick}
+}
+\pgfplotsset{bayes/science plot/.style={
+  axis line style={draw=BayesSecondary},tick style={draw=BayesSecondary},
+  tick label style={font=\scriptsize,color=BayesSecondary},label style={font=\scriptsize,color=BayesSecondary},
+  grid=major,grid style={draw=BayesBorder,line width=.25pt},legend style={font=\scriptsize,draw=none,fill=none},
+  every axis plot/.append style={very thick},width=.88\linewidth,height=.42\textheight
+}}
+\newcommand{\Citation}[1]{{\scriptsize\color{BayesMuted}#1}}
+\newenvironment{References}{\begin{frame}[fragile,environment=References]{References}\footnotesize\color{BayesSecondary}\begin{itemize}}{\end{itemize}\end{frame}}
+\newcommand{\ContentPendingTopic}[1]{%
+  \begin{frame}{Content status}\begin{CautionCard}{Academic content pending approval}#1\end{CautionCard}\end{frame}
+  \begin{frame}{Author handoff}\begin{itemize}\item Replace this orientation topic with approved learning objectives, examples, assessments and references.\item Add further topics to this session before learner release.\item Build the topic for authoring, then the session and course for review.\end{itemize}\end{frame}%
+}
+\let\ContentPendingConcept\ContentPendingTopic
+

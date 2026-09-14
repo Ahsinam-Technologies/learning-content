@@ -1,0 +1,34 @@
+% Canonical sample reference book demonstrating full publication-ready book architecture.
+% Inspired by the professional structuring in thermal_engg_interviews, styled with BayesStack design system.
+\documentclass[10pt,letterpaper,twoside,openright,twocolumn]{book}
+\usepackage{import}
+\usepackage{subfiles}
+\usepackage[science]{bayesstacknotes}
+
+\CourseMetadata{SAMPLE 101}{Bayesian Reasoning for Data Science}{First-Principles Probability, Production Workflows, and Applied Decision Analysis}
+\renewcommand{\BookAuthor}{Sagar Udasi and the BayesStack Academic Editorial Board}
+\renewcommand{\BookAuthors}{Sagar Udasi\\[1.3mm]BayesStack Academic Editorial Board}
+
+\begin{document}
+\frontmatter
+\onecolumn
+\BayesBookCover
+\BayesCopyrightPage
+\BayesOpeningPage
+\cleardoublepage
+
+\tableofcontents
+\cleardoublepage
+\twocolumn
+
+\mainmatter
+\part{Foundations of Probabilistic Reasoning}
+\import{notes/chapter-01-bayesian-inference/}{chapter-01-bayesian-inference-content.tex}
+
+\part{Applied Decision Systems}
+\import{notes/chapter-02-decision-analysis/}{chapter-02-decision-analysis-content.tex}
+
+\backmatter
+\onecolumn
+\BayesBackCover
+\end{document}

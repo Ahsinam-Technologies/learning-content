@@ -1,0 +1,43 @@
+# Reference Sample Video Narration: Foundations of Bayesian Inference
+title: "Foundations of Bayesian Inference"
+course_code: "SAMPLE 101"
+session: "01"
+
+metadata:
+  voice: "en-US-ChristopherNeural"
+  speed: 1.0
+  target_duration_sec: 120
+
+scenes:
+  - id: "scene_01_prob_as_logic"
+    title: "Probability as Deductive Logic"
+    visual: "animate_epistemic_probability_card"
+    narration: >
+      In modern data science, scientific inquiry is fundamentally an inverse problem.
+      We observe empirical data, and our objective is to infer the governing state or latent
+      parameter vector theta. The Bayesian paradigm treats probability as an operational extension
+      of classical Boolean logic under incomplete information.
+
+  - id: "scene_02_bayes_rule"
+    title: "Anatomy of Bayes' Theorem"
+    visual: "derive_bayes_formula"
+    narration: >
+      Bayes theorem combines our prior distribution with the observation likelihood.
+      The posterior probability of theta given data y equals the likelihood times the prior,
+      divided by the marginal evidence normalizer.
+
+  - id: "scene_03_conjugacy_update"
+    title: "Precision-Weighted Updating"
+    visual: "plot_normal_conjugate_update"
+    narration: >
+      Under a Gaussian likelihood with known variance, a normal prior yields an exact Gaussian
+      posterior. Notice that the posterior precision is strictly additive, and the posterior mean
+      is a precision-weighted convex combination of prior belief and empirical sample evidence.
+
+  - id: "scene_04_production_stability"
+    title: "Production Invariants"
+    visual: "show_log_space_computation"
+    narration: >
+      When deploying Bayesian estimators into microservices, multiplying raw likelihoods causes
+      catastrophic floating-point underflow. Production systems must execute updates strictly in log-space
+      using stable log-sum-exp primitives.

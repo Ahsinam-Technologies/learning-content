@@ -1,0 +1,38 @@
+# BayesStack Video Narration: Generative Models - Advanced Diffusion & Flow Matching
+title: "ML 501 - Session 01: Course Orientation"
+course_code: "ML 501"
+session: "01"
+
+metadata:
+  voice: "en-US-ChristopherNeural"
+  speed: 1.0
+  target_duration_sec: 120
+
+scenes:
+  - id: "scene_01_introduction"
+    title: "Course Orientation: Core Principles"
+    visual: "animate_title_card"
+    narration: >
+      Welcome to Course Orientation in Generative Models - Advanced Diffusion & Flow Matching. In this session, we establish the core theoretical
+      framework and examine foundational principles governing this topic.
+
+  - id: "scene_02_formal_derivation"
+    title: "Formal Analysis & Mathematical Model"
+    visual: "derive_core_invariant"
+    narration: >
+      Let us formalize the primary invariants. By constructing explicit representations, we can systematically
+      evaluate behavior under nominal and boundary conditions.
+
+  - id: "scene_03_implementation_insights"
+    title: "Engineering & Applied Invariants"
+    visual: "demonstrate_code_invariant"
+    narration: >
+      Translating mathematical principles into robust systems requires strict adherence to numerical stability,
+      well-defined interfaces, and predictable performance characteristics.
+
+  - id: "scene_04_summary_takeaways"
+    title: "Key Takeaways & Next Steps"
+    visual: "show_summary_card"
+    narration: >
+      In summary, mastering these core invariants provides the bedrock for advanced topics. Review the accompanying
+      reading notes and implement the session exercises before moving forward.

@@ -11,9 +11,67 @@ Thumbs.db
 .~lock.*#
 *.tmp
 
+# Rebuildable LaTeX outputs
+.build/
+build/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
+
+# Python & Engine caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+
+# Video & Audio Binary Outputs (Code is tracked, rendered media is ignored)
+*.mp4
+*.mov
+*.avi
+*.webm
+*.mkv
+*.flv
+*.wmv
+*.m4v
+*.wav
+*.mp3
+*.aac
+*.m4a
+*.ogg
+*.flac
+*.wma
+
+# Animation, Manim & Video Render Directories
+media/
+**/media/
+.manim/
+**/.manim/
+*.mp4.part
+ffmpeg-*.log
+
 # Editor directories and files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# Credentials & secrets
+.creds/

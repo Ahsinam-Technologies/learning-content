@@ -1,0 +1,38 @@
+\section{Probability as Logic Under Uncertainty}
+
+Scientific inquiry and computational decision-making are fundamentally inverse problems. We observe manifestations of an underlying physical, economic, or computational phenomenon, and our objective is to infer the governing state or latent parameter vector \(\theta \in \Theta\).
+
+In classical frequentist formulations, probability is defined strictly through asymptotic relative frequencies under hypothetical infinite repetitions of identical trials. While mathematically elegant, this frequentist construct faces severe operational limitations when assessing non-repeatable events---such as macroeconomic shocks, sovereign elections, or novel technological breakthroughs.
+
+The Bayesian paradigm, formalized through the foundational axioms of Cox and Jaynes, treats probability as an operational extension of classical Boolean deductive logic to situations characterized by incomplete information.
+
+\begin{DefinitionBox}{Epistemic Probability}
+  Let \(A\) and \(B\) denote propositions in an assertional algebra. The conditional probability \(P(A \mid B)\) quantifies the degree of rational plausibility assigned to \(A\) being true, given the absolute truth of background information \(B\).
+\end{DefinitionBox}
+
+\subsection{Anatomy of Bayes' Theorem}
+
+Consider an observed dataset \(y = (y_1, y_2, \dots, y_n) \in \mathcal{Y}^n\) assumed to be generated according to a parameterized data-generating process with conditional density \(p(y \mid \theta)\). By the product rule of joint probability distributions:
+\[
+  p(\theta, y) = p(y \mid \theta) \, p(\theta) = p(\theta \mid y) \, p(y)
+\]
+Equating these expansions directly yields Bayes' Theorem:
+
+\BookEquation{p(\theta \mid y) = \frac{p(y \mid \theta) \, p(\theta)}{p(y)} = \frac{p(y \mid \theta) \, p(\theta)}{\int_\Theta p(y \mid \theta') \, p(\theta') \, d\theta'}}
+
+This expression contains four distinct mathematical objects, each performing a distinct inferential duty:
+
+\begin{enumerate}
+  \item \textbf{Prior Distribution \(p(\theta)\)}: Quantifies epistemic belief regarding parameter values prior to taking account of the current evidence.
+  \item \textbf{Likelihood Function \(p(y \mid \theta)\)}: Evaluates the relative plausibility of observing data \(y\) as a function of the parameter \(\theta\).
+  \item \textbf{Marginal Likelihood \(p(y)\)}: The normalizing constant integrating over the full parameter support, ensuring proper distribution scaling.
+  \item \textbf{Posterior Distribution \(p(\theta \mid y)\)}: The synthesized state of knowledge after combining prior beliefs with empirical evidence.
+\end{enumerate}
+
+\begin{InsightBox}{The Likelihood is Not a Probability Density Over \(\theta\)}
+  While \(p(y \mid \theta)\) integrates to one over the sample space \(\mathcal{Y}\) for fixed \(\theta\), it generally does \emph{not} integrate to one with respect to \(\theta\) for fixed data \(y\). It only becomes a valid probability density over \(\theta\) once weighted by the prior \(p(\theta)\) and divided by the evidence normalizer \(p(y)\).
+\end{InsightBox}
+
+\begin{WarningBox}{Risk of Unbounded Priors}
+  Adopting improper uniform priors \(p(\theta) \propto 1\) on unbounded parameter spaces (\(\Theta = \mathbb{R}\)) does not guarantee an integrable posterior. Whenever non-informative priors are employed, the analyst is mathematically obligated to verify that \(\int_\Theta p(y \mid \theta) \, d\theta < \infty\).
+\end{WarningBox}

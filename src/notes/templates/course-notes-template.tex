@@ -1,0 +1,18 @@
+\documentclass[10pt,twoside,twocolumn]{book}
+\usepackage{import}
+\usepackage{subfiles}
+% Add [science] for physics, chemistry, circuits, SI units and quantum notation
+\usepackage{bayesstacknotes}
+\CourseMetadata{COURSE 101}{Course Title}{Course Reading Notes}
+\author{BayesStack}
+\date{}
+
+\begin{document}
+\BayesBookTitlePage{Course Title}{Comprehensive Reading Notes and Reference}{COURSE 101}{BayesStack Academic Editorial Board}
+\tableofcontents
+\clearpage
+
+% Import chapter content fragments in curriculum order.
+\import{notes/chapter-01-name/}{chapter-01-name-content.tex}
+\import{notes/chapter-02-name/}{chapter-02-name-content.tex}
+\end{document}

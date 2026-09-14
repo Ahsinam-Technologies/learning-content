@@ -1,0 +1,36 @@
+\section{Loss Functions and Bayes Actions}
+
+A common error in data science and quantitative engineering is treating point predictions as final decisions. In real operations, estimating an expected outcome is merely an intermediate technical step; the ultimate challenge is deciding which real-world action \(a \in \mathcal{A}\) to execute under uncertainty.
+
+\begin{DefinitionBox}{Loss Function}
+  A loss function \(L(\theta, a): \Theta \times \mathcal{A} \to \mathbb{R}\) assigns a non-negative real penalty to taking action \(a\) when the true, unobserved state of nature is \(\theta\).
+\end{DefinitionBox}
+
+\subsection{Expected Loss Minimization}
+
+Given posterior distribution \(p(\theta \mid y)\), the posterior expected loss of an action \(a\) is:
+
+\BookEquation{\rho(a, y) = \mathbb{E}_{\theta \mid y}[L(\theta, a)] = \int_\Theta L(\theta, a) \, p(\theta \mid y) \, d\theta}
+
+The \textbf{Bayes optimal action} \(a^*\) is the choice that directly minimizes this posterior expected loss:
+\[
+  a^*(y) = \arg\min_{a \in \mathcal{A}} \rho(a, y)
+\]
+
+\subsection{Canonical Loss Profiles}
+
+The mathematical structure of the chosen loss function dictates which statistical summary of the posterior is selected:
+
+\begin{BookTable}{>{\raggedright\arraybackslash}p{0.32\linewidth} X X}
+  \BookTableHeader \BookTableHead{Loss Function} & \BookTableHead{Formula \(L(\theta, a)\)} & \BookTableHead{Optimal Action \(a^*\)} \\
+  Quadratic (Squared Error) & \((\theta - a)^2\) & Posterior Mean \(\mathbb{E}[\theta \mid y]\) \\
+  Linear (Absolute Error) & \(|\theta - a|\) & Posterior Median \\
+  Zero-One Loss & \(\mathbb{I}(\theta \ne a)\) & Posterior Mode (MAP) \\
+  Lin-Lin (Asymmetric) & \(c_1(\theta - a)_+ + c_2(a - \theta)_+\) & Fractile \(\frac{c_1}{c_1 + c_2}\) \\
+\end{BookTable}
+
+\begin{ExerciseBox}{Asymmetric Capacity Planning}
+  A cloud data center provisions GPU instances for an upcoming training cluster workload. Let \(\theta\) be the peak concurrent demand. Under-provisioning incurs an outage penalty of \$10,000 per missing unit, while over-provisioning incurs an idle lease cost of \$2,000 per spare unit.
+  
+  Determine the exact percentile of the predictive demand distribution at which capacity must be provisioned.
+\end{ExerciseBox}

@@ -1,0 +1,19 @@
+{
+  "project_name": "Foundations of Bayesian Inference",
+  "course_code": "SAMPLE 101",
+  "session": "01",
+  "aspect_ratio": "16:9",
+  "resolution": [1920, 1080],
+  "fps": 30,
+  "theme": "bayesstack-teal",
+  "tts": {
+    "engine": "edge-tts",
+    "voice": "en-US-ChristopherNeural",
+    "speed": 1.0
+  },
+  "subtitles": {
+    "enabled": true,
+    "format": "srt",
+    "burn_into_video": false
+  }
+}

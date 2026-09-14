@@ -1,0 +1,55 @@
+\section{Production Scenarios and Technical Interview Questions}
+
+In applied machine learning, quantitative finance, and autonomous engineering systems, Bayesian modeling questions evaluate whether a candidate understands the operational boundary between mathematical formalism and production realities.
+
+\begin{interviewbox}[How do you detect and handle prior-data conflict in an online estimation pipeline?]
+When the likelihood mass from streaming telemetry concentrates in the extreme tails of the prior distribution, standard conjugate updates will yield biased or unstable posterior estimates.
+\end{interviewbox}
+
+\subsection*{Underlying Principles Tested}
+The interviewer is probing:
+\begin{enumerate}
+  \item Understanding of epistemic model misspecification.
+  \item Ability to formulate formal diagnostic statistics (e.g., prior predictive $p$-values).
+  \item Practical engineering instincts regarding robustification.
+\end{enumerate}
+
+\begin{assumptionbox}[Exchangeability and Stationarity]
+Standard conjugate Bayesian updates assume the sequence of observed data points $y_1, y_2, \dots, y_n$ is conditionally independent and identically distributed given parameter $\theta$. If the data-generating process undergoes concept drift, this exchangeability assumption is violated.
+\end{assumptionbox}
+
+\begin{numericalexample}{Precision-Weighted Normal Updating}
+Suppose prior mean $\mu_0 = 100$ with prior variance $\sigma_0^2 = 25$ (precision $\tau_0 = 1/25 = 0.04$). We observe $n = 10$ samples with empirical mean $\bar{y} = 120$ and observation noise $\sigma^2 = 10$ (sample precision $n/\sigma^2 = 10/10 = 1.0$).
+
+The posterior precision is:
+\[
+  \begin{aligned}
+    \tau_n &= \tau_0 + \frac{n}{\sigma^2} = 0.04 + 1.0 = 1.04 \\
+    \sigma_n^2 &= \frac{1}{\tau_n} = \frac{1}{1.04} \approx 0.9615
+  \end{aligned}
+\]
+The posterior mean satisfies:
+\[
+  \mu_n = \frac{0.04 \times 100 + 1.0 \times 120}{1.04} = \frac{4 + 120}{1.04} \approx 119.23
+\]
+\end{numericalexample}
+
+\physicalmeaning{The posterior variance decreases strictly monotonically with sample size regardless of the observed values, while the posterior mean is pulled toward the empirical mean at a rate governed by the ratio of data precision to prior precision.}
+
+\begin{mistakebox}[Treating the Likelihood as a Probability Density Over Parameters]
+A common interview error is normalizing the likelihood function over the parameter space $\Theta$ without multiplying by a proper prior. Unless explicitly weighted by $p(\theta)$, $\int_\Theta p(y \mid \theta) \, d\theta$ may diverge, and maximum likelihood point estimates do not reflect epistemic parameter uncertainty.
+\end{mistakebox}
+
+\begin{shortcutbox}[Conjugacy Fast Form]
+For exponential families, write the likelihood in canonical form $p(y \mid \eta) = h(y)\exp(\eta^T T(y) - A(\eta))$. The conjugate prior has parameters $(\chi, \nu)$. Updating simply adds empirical sufficient statistics: $\chi_{\text{post}} = \chi_0 + \sum T(y_i)$ and $\nu_{\text{post}} = \nu_0 + n$.
+\end{shortcutbox}
+
+\begin{variantbox}[Heavy-Tailed Priors for Robust Inference]
+When prior beliefs are uncertain, replacing a Gaussian prior with a Student-$t$ or Cauchy prior prevents catastrophic bias during unexpected outlier bursts: extreme observations are rejected as anomalies rather than forcing large posterior shifts.
+\end{variantbox}
+
+\begin{groundrealitybox}[Hardware Floating-Point Stability]
+In high-throughput microservices, computing likelihoods directly in probability space causes catastrophic floating-point underflow ($p(y \mid \theta) \to 0$). Production implementations must maintain calculations strictly in log-space using stable \texttt{logsumexp} primitives.
+\end{groundrealitybox}
+
+\sourcesnote{Gelman, A., et al. (2013). Bayesian Data Analysis (3rd ed.). CRC Press.}

@@ -1,0 +1,40 @@
+# Narration Script and Speech Timing Template
+# Save in course videos session folder: <Course>/videos/session-XX-<name>/narration.yaml
+
+title: "Session Title"
+course_code: "COURSE 101"
+session: "01"
+
+metadata:
+  voice: "en-US-ChristopherNeural"
+  speed: 1.0
+  target_duration_sec: 180
+
+scenes:
+  - id: "scene_01_hook"
+    title: "Introduction & Motivation"
+    visual: "display_hook_graphic"
+    narration: >
+      Welcome to this session. Today we will explore the fundamental principles
+      governing computational decision making under uncertainty.
+
+  - id: "scene_02_formalism"
+    title: "Mathematical Formulation"
+    visual: "animate_equation_derivation"
+    narration: >
+      Let theta denote our unobserved parameter vector. We observe empirical data y,
+      and update our prior belief rationally using Bayes rule.
+
+  - id: "scene_03_implementation"
+    title: "Algorithmic Execution"
+    visual: "show_code_execution"
+    narration: >
+      In production systems, computing updates in linear probability space leads to
+      underflow. We must formulate our loss and likelihoods strictly in log-space.
+
+  - id: "scene_04_takeaways"
+    title: "Summary & Invariants"
+    visual: "display_summary_card"
+    narration: >
+      To summarize, always maintain precision-weighted posteriors and verify that
+      unnormalized densities remain integrable over the support domain.

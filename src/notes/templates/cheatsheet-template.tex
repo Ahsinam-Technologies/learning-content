@@ -1,0 +1,44 @@
+% Save in sections/ as section-XX-cheatsheet-content.tex.
+% End-of-chapter high-density cheat sheet.
+% Wraps content in cheatsheetpages environment with custom outer frame,
+% spanning header, quick tables, compact formulas, and shortcut rules.
+% Do not compile directly.
+
+\begin{cheatsheetpages}
+\cheatsheettitle{[Chapter Name] Cheat Sheet: Core Principles and Invariants}{Chapter \thechapter\ Cheat Sheet}
+\label{sec:ch\thechapter-cheatsheet}
+
+\subsection*{Core Invariants and Retrieval Anchors}
+
+\begin{intuitionbox}[What this chapter delivers]
+Summary of the mental models, invariants, and decisions this chapter equips the practitioner to answer and execute.
+\end{intuitionbox}
+
+\subsection*{Quick Reference Formula & Parameter Map}
+
+{\scriptsize
+\begin{BookTable}{>{\raggedright\arraybackslash}p{0.30\linewidth} >{\centering\arraybackslash}p{0.30\linewidth} >{\raggedright\arraybackslash}X}
+  \BookTableHeader \BookTableHead{Entity / Model} & \BookTableHead{Form / Prior} & \BookTableHead{Posterior / Result} \\
+  Model Family A & $\theta \sim \mathcal{D}_0(\alpha)$ & $\theta \mid x \sim \mathcal{D}_n(\alpha')$ \\
+  Model Family B & $\mu \sim \mathcal{N}(\mu_0, \sigma_0^2)$ & $\mu \mid y \sim \mathcal{N}(\mu_n, \sigma_n^2)$ \\
+  Model Family C & $\lambda \sim \text{Gamma}(\alpha, \beta)$ & $\lambda \mid y \sim \text{Gamma}(\alpha', \beta')$ \\
+\end{BookTable}
+}
+
+\subsection*{Decision Rules and Diagnostic Checkpoints}
+
+\begin{itemize}
+  \item \textbf{Criterion 1}: Core operating diagnostic and expected threshold.
+  \item \textbf{Criterion 2}: Sensitivity check against perturbed inputs or model assumptions.
+  \item \textbf{Criterion 3}: Production fallback and containment strategy when data violates expectations.
+\end{itemize}
+
+\subsection*{Governing Equation}
+
+\BookEquation{\mathcal{L}(\theta) = \sum_{i=1}^n \log p(y_i \mid \theta) + \log p(\theta)}
+
+\begin{shortcutbox}[Numerical Stability Rule]
+State the production-grade numerical shortcut or invariant to preserve accuracy and avoid floating-point underflow.
+\end{shortcutbox}
+
+\end{cheatsheetpages}

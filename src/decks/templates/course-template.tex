@@ -1,0 +1,22 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage{subfiles}
+\usepackage{import}
+% Add [science] for chemistry, physics, circuits, quantum diagrams and SI units.
+\usepackage{bayesstackslides}
+\CourseMetadata{COURSE 101}{Course title}{Course slides}
+% This is a shared wrapper reference. The Makefile generates wrappers in .build;
+% never copy a wrapper into a course directory.
+\author{BayesStack}
+\date{}
+
+\begin{document}
+\BayesCourseTitleSlide{Course title}{One concise promise for the learner}
+\CourseSessionMapSlide{
+  \SessionEntry{01}{First session}{A coherent session outcome.}
+  \SessionEntry{02}{Second session}{The next session outcome.}
+}
+% Import session content fragments in learner-facing order. The session wrappers
+% compile independently; they are intentionally not nested into this document.
+\import{decks/session-01-name/}{session-01-name-content.tex}
+\import{decks/session-02-name/}{session-02-name-content.tex}
+\end{document}

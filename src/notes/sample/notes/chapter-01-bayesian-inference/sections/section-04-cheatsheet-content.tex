@@ -1,0 +1,32 @@
+\begin{cheatsheetpages}
+\cheatsheettitle{Chapter 1 Cheat Sheet: Foundations of Bayesian Inference}{Chapter 1 Cheat Sheet}
+
+\subsection*{Core Bayesian Updating Formulas}
+
+{\scriptsize
+\begin{BookTable}{>{\raggedright\arraybackslash}p{0.30\linewidth} >{\centering\arraybackslash}p{0.30\linewidth} >{\raggedright\arraybackslash}X}
+  \BookTableHeader \BookTableHead{Family} & \BookTableHead{Prior} & \BookTableHead{Posterior} \\
+  Beta-Bin & $\text{Beta}(\alpha, \beta)$ & $\text{Beta}(\alpha + k, \, \beta + n - k)$ \\
+  Normal & $\mathcal{N}(\mu_0, \sigma_0^2)$ & $\mathcal{N}(\mu_n, \sigma_n^2)$ with $\sigma_n^{-2} = \sigma_0^{-2} + n\sigma^{-2}$ \\
+  Gamma-Pois & $\text{Gamma}(\alpha, \beta)$ & $\text{Gamma}(\alpha + \sum y_i, \, \beta + n)$ \\
+  Dirichlet & $\text{Dir}(\boldsymbol{\alpha})$ & $\text{Dir}(\boldsymbol{\alpha} + \mathbf{x})$ \\
+\end{BookTable}
+}
+
+\subsection*{Diagnostic Checks and Decision Rules}
+
+\begin{itemize}
+  \item \textbf{Prior Predictive Check}: Compute $p(y_{\text{rep}}) = \int p(y_{\text{rep}} \mid \theta) p(\theta) d\theta$ to test if prior accommodates realistic data.
+  \item \textbf{Posterior Predictive Check}: Simulate $y^* \sim p(y^* \mid y) = \int p(y^* \mid \theta) p(\theta \mid y) d\theta$ to inspect systematic model deviations.
+  \item \textbf{Credible Interval vs.\ Confidence Interval}: A 95\% credible interval contains parameter $\theta$ with 0.95 epistemic probability conditional on observed data $y$.
+\end{itemize}
+
+\subsection*{Log-Space Precision Invariant}
+
+\BookEquation{\log p(\theta \mid y) = \log p(y \mid \theta) + \log p(\theta) - \text{logsumexp}_{\theta'} \big[\log p(y \mid \theta') + \log p(\theta')\big]}
+
+\begin{shortcutbox}[Numerical Stability Rule]
+Always store log-posteriors up to an additive constant: $\log \tilde{p}(\theta \mid y) = \ell(\theta) + \log p(\theta)$. Subtract $\max_{\theta} \log \tilde{p}$ before exponentiating.
+\end{shortcutbox}
+
+\end{cheatsheetpages}

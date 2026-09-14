@@ -1,0 +1,883 @@
+% bayesstacknotes.sty — publication-ready book & reading notes system for BayesStack tenant institutions.
+% Inspired by the thermal_engg_interviews professional publication book architecture.
+% Adheres strictly to the BayesStack mint-and-teal design system, typography, and letterpaper geometry.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bayesstacknotes}[2026/09/14 Shared BayesStack publication-ready book package]
+
+% --- Package Options ---
+\newif\ifBayesScience
+\DeclareOption{science}{\BayesSciencetrue}
+\ProcessOptions\relax
+
+% --- Essential Engine & Font System ---
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[scaled=.96]{helvet}
+  \newcommand\BayesDisplayFont{\sffamily}
+\else
+  \RequirePackage{fontspec}
+  % Load fonts with fallback search paths
+  \IfFileExists{src/core/fonts/Inter-Regular.ttf}{%
+    \setmainfont[Path=src/core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+    \setsansfont[Path=src/core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+  }{%
+    \IfFileExists{core/fonts/Inter-Regular.ttf}{%
+      \setmainfont[Path=core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+      \setsansfont[Path=core/fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+    }{%
+      \IfFileExists{fonts/Inter-Regular.ttf}{%
+        \setmainfont[Path=fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+        \setsansfont[Path=fonts/,UprightFont=Inter-Regular.ttf,BoldFont=Inter-SemiBold.ttf]{Inter}%
+      }{%
+        \IfFontExistsTF{Inter}{%
+          \setmainfont{Inter}\setsansfont{Inter}%
+        }{%
+          \setmainfont{TeX Gyre Heros}\setsansfont{TeX Gyre Heros}%
+        }%
+      }%
+    }%
+  }
+  \IfFileExists{src/core/fonts/Outfit-Regular.ttf}{%
+    \newfontfamily\BayesDisplayFont[Path=src/core/fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+  }{%
+    \IfFileExists{core/fonts/Outfit-Regular.ttf}{%
+      \newfontfamily\BayesDisplayFont[Path=core/fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+    }{%
+      \IfFileExists{fonts/Outfit-Regular.ttf}{%
+        \newfontfamily\BayesDisplayFont[Path=fonts/,UprightFont=Outfit-Regular.ttf,BoldFont=Outfit-SemiBold.ttf]{Outfit}%
+      }{\IfFontExistsTF{Outfit}{\newfontfamily\BayesDisplayFont{Outfit}}{\let\BayesDisplayFont\sffamily}}
+    }%
+  }
+  \IfFontExistsTF{JetBrains Mono}{%
+    \setmonofont[Scale=0.88]{JetBrains Mono}%
+  }{%
+    \IfFontExistsTF{Liberation Mono}{%
+      \setmonofont[Scale=0.88]{Liberation Mono}%
+    }{%
+      \IfFontExistsTF{DejaVu Sans Mono}{%
+        \setmonofont[Scale=0.88]{DejaVu Sans Mono}%
+      }{}%
+    }%
+  }
+\fi
+
+% --- Exact Page Size & Geometry (matching thermal_engg_interviews) ---
+\RequirePackage[
+  letterpaper,
+  inner=0.80in,
+  outer=0.55in,
+  top=0.65in,
+  bottom=0.70in,
+  headheight=19pt,
+  headsep=0.20in,
+  footskip=0.36in,
+  includeheadfoot
+]{geometry}
+
+% --- Essential Typographic Packages & Layout Engine ---
+\RequirePackage{microtype}
+\RequirePackage{ragged2e}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{tabularx}
+\RequirePackage{graphicx}
+\RequirePackage[table]{xcolor}
+\RequirePackage{caption}
+\RequirePackage{float}
+\RequirePackage{stfloats}
+\RequirePackage{cuted}
+\RequirePackage{needspace}
+\RequirePackage{tocloft}
+\RequirePackage{enumitem}
+\RequirePackage{eso-pic}
+\RequirePackage{fancyhdr}
+\RequirePackage{titlesec}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{environ}
+\RequirePackage{listings}
+\RequirePackage{etoolbox}
+\RequirePackage{currfile}
+\RequirePackage{xurl}
+\RequirePackage[hypertexnames=false]{hyperref}
+\RequirePackage[nameinlink,noabbrev]{cleveref}
+
+% Science mode packages
+\ifBayesScience
+  \RequirePackage{siunitx}
+  \RequirePackage{physics}
+  \RequirePackage[version=4]{mhchem}
+  \RequirePackage{chemfig}
+  \RequirePackage{circuitikz}
+  \RequirePackage{tikz-3dplot}
+  \RequirePackage{braket}
+  \RequirePackage{quantikz}
+  \sisetup{detect-all,output-decimal-marker={.},per-mode=symbol,range-phrase={ to },range-units=single}
+\fi
+
+% Technical diagrams and plots
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\usetikzlibrary{arrows.meta,backgrounds,calc,decorations.pathmorphing,decorations.pathreplacing,positioning,patterns,shapes.geometric}
+\pgfplotsset{compat=1.18}
+
+% --- BayesStack Design System Palette Tokens ---
+\definecolor{BayesTeal}{HTML}{0B6763}
+\definecolor{BayesBrandTeal}{HTML}{056766}
+\definecolor{BayesDeepTeal}{HTML}{084C49}
+\definecolor{BayesDark}{HTML}{091A18}
+\definecolor{BayesInk}{HTML}{123333}
+\definecolor{BayesSecondary}{HTML}{4A6360}
+\definecolor{BayesMuted}{HTML}{59716E}
+\definecolor{BayesLight}{HTML}{94A3B8}
+\definecolor{BayesBorder}{HTML}{D7E8E4}
+\definecolor{BayesPale}{HTML}{E4F2EF}
+\definecolor{BayesCanvas}{HTML}{F1F8F6}
+\definecolor{BayesSurface}{HTML}{FFFFFF}
+\definecolor{BayesCode}{HTML}{F0F7F6}
+\definecolor{BayesCodeHighlight}{HTML}{D9EFEB}
+\definecolor{BayesAmber}{HTML}{9A6700}
+\definecolor{BayesBlue}{HTML}{2368A2}
+\definecolor{BayesPlum}{HTML}{7357A3}
+\definecolor{BayesGreen}{HTML}{3B7A57}
+\definecolor{BayesBrown}{HTML}{765D48}
+
+% Typography & Text Layout (matching thermal_engg_interviews)
+\color{BayesInk}
+\frenchspacing
+\raggedbottom
+\RaggedRight
+\linespread{0.97}\selectfont
+\setlength{\columnsep}{7mm}
+\setlength{\columnseprule}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3.2pt plus 0.8pt minus 0.4pt}
+\setlength{\emergencystretch}{3em}
+\pretolerance=10000
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=1600
+\hbadness=10000
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{4pt plus 2pt}
+\setlength{\belowdisplayshortskip}{4pt plus 2pt minus 1pt}
+\allowdisplaybreaks[2]
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\interfootnotelinepenalty=10000
+
+% Lists formatting
+\setlist[itemize]{leftmargin=1.35em,topsep=3pt,itemsep=1.2pt,parsep=0pt,partopsep=0pt}
+\setlist[enumerate]{leftmargin=1.65em,topsep=3pt,itemsep=1.2pt,parsep=0pt,partopsep=0pt}
+\setlist[description]{topsep=3pt,itemsep=1.2pt,parsep=0pt,partopsep=0pt}
+
+% Table formatting
+\arrayrulecolor{BayesBorder}
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{4pt}
+
+% Captions
+\captionsetup{
+  font=footnotesize,
+  labelfont={bf,sf,color=BayesTeal},
+  textfont={color=BayesInk},
+  format=plain,
+  justification=raggedright,
+  singlelinecheck=false,
+  skip=4pt
+}
+
+% Hyperref setup
+\hypersetup{
+  colorlinks=true,
+  linkcolor=BayesDeepTeal,
+  citecolor=BayesTeal,
+  urlcolor=BayesBlue,
+  pdfborder={0 0 0}
+}
+
+% --- Metadata Variables ---
+\newcommand{\BookTitle}{Course Reading Notes}
+\newcommand{\BookShortTitle}{Reading Notes}
+\newcommand{\BookSubtitle}{Comprehensive Academic Reference and Practice Guide}
+\newcommand{\BookType}{Academic Course Reference}
+\newcommand{\BookAudience}{Learners, software engineers, and quantitative practitioners}
+\newcommand{\BookAuthor}{BayesStack Academic Editorial Board}
+\newcommand{\BookAuthors}{BayesStack Academic Editorial Board}
+\newcommand{\BookISBN}{979-8-1867-3262-4}
+\newcommand{\BayesCourseCode}{}
+\newcommand{\BayesCourseName}{}
+\newcommand{\BayesNotesScope}{}
+
+\newcommand{\CourseMetadata}[3]{%
+  \gdef\BayesCourseCode{#1}%
+  \gdef\BayesCourseName{#2}%
+  \gdef\BayesNotesScope{#3}%
+  \renewcommand{\BookTitle}{#2}%
+  \renewcommand{\BookShortTitle}{#1}%
+  \renewcommand{\BookSubtitle}{#3}%
+}
+
+% Wordmark & Asset Paths
+\newcommand{\BayesAssetRoot}{}
+\newcommand{\BayesCaptureAssetRoot}{\xdef\BayesAssetRoot{\currfiledir}}
+\newcommand{\BayesAssetPath}[1]{\BayesAssetRoot#1}
+\newcommand{\BayesStackWordmark}{{\BayesDisplayFont\bfseries\textcolor{BayesTeal}{BayesStack}}}
+\newcommand{\BayesStackMark}{\IfFileExists{bayesstack_logo_black_2048.png}{\raisebox{-.13cm}{\includegraphics[height=.42cm]{bayesstack_logo_black_2048.png}}\hspace{.15cm}}{}\BayesStackWordmark}
+
+% --- Section & Chapter Headings (matching thermal_engg_interviews) ---
+\setcounter{tocdepth}{1}
+\setcounter{secnumdepth}{3}
+
+\titleformat{\chapter}[display]
+  {\normalfont\BayesDisplayFont\bfseries\color{BayesInk}}
+  {\fontsize{9}{11}\selectfont\color{BayesTeal}\MakeUppercase{\chaptertitlename}\ \thechapter}
+  {3pt}
+  {\fontsize{22}{25}\selectfont\filright}
+  [\vspace{5pt}{\color{BayesBorder}\titlerule[0.6pt]}]
+\titlespacing*{\chapter}{0pt}{0pt}{14pt}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\BayesDisplayFont\bfseries\color{BayesInk}}
+  {}
+  {0pt}
+  {\fontsize{22}{25}\selectfont\filright}
+  [\vspace{5pt}{\color{BayesBorder}\titlerule[0.6pt]}]
+\titlespacing*{name=\chapter,numberless}{0pt}{0pt}{14pt}
+
+\titleformat{\part}[display]
+  {\normalfont\BayesDisplayFont\bfseries\color{BayesInk}\centering}
+  {\fontsize{10}{12}\selectfont\color{BayesTeal}\MakeUppercase{\partname}\ \thepart}
+  {8pt}
+  {\fontsize{25}{29}\selectfont}
+\titlespacing*{\part}{0pt}{0.16\textheight}{0pt}
+
+\titleformat{\section}
+  {\needspace{4\baselineskip}\normalfont\BayesDisplayFont\bfseries\large\color{BayesInk}}
+  {\thesection}{0.65em}{}
+\titlespacing*{\section}{0pt}{10pt plus 2pt minus 1pt}{4pt}
+
+\titleformat{\subsection}
+  {\needspace{3\baselineskip}\normalfont\BayesDisplayFont\bfseries\normalsize\color{BayesDeepTeal}}
+  {\thesubsection}{0.65em}{}
+\titlespacing*{\subsection}{0pt}{8pt plus 2pt minus 1pt}{3pt}
+
+\titleformat{\subsubsection}
+  {\needspace{3\baselineskip}\normalfont\BayesDisplayFont\bfseries\small\color{BayesInk}}
+  {\thesubsubsection}{0.65em}{}
+\titlespacing*{\subsubsection}{0pt}{7pt plus 1pt}{2pt}
+
+\titleformat{\paragraph}[runin]
+  {\normalfont\BayesDisplayFont\bfseries\small\color{BayesInk}}
+  {}{0pt}{}
+\titlespacing*{\paragraph}{0pt}{5pt plus 1pt}{0.55em}
+
+% --- Table of Contents Formatting (tocloft) ---
+\renewcommand{\cfttoctitlefont}{\BayesDisplayFont\bfseries\fontsize{25}{29}\selectfont\color{BayesInk}}
+\renewcommand{\cftaftertoctitle}{\par\vspace{4pt}{\color{BayesBorder}\hrule height 0.6pt}\vspace{8pt}}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{6pt}
+\renewcommand{\cftchapfont}{\BayesDisplayFont\bfseries\color{BayesInk}}
+\renewcommand{\cftchappagefont}{\BayesDisplayFont\bfseries\color{BayesInk}}
+\renewcommand{\cftsecfont}{\small}
+\renewcommand{\cftsecpagefont}{\small}
+\renewcommand{\cftsubsecfont}{\footnotesize\color{BayesMuted}}
+\renewcommand{\cftsubsecpagefont}{\footnotesize\color{BayesMuted}}
+\setlength{\cftbeforechapskip}{5pt}
+\setlength{\cftbeforesecskip}{0.5pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\setlength{\cftchapnumwidth}{2.6em}
+\setlength{\cftsecindent}{2.6em}
+\setlength{\cftsecnumwidth}{3.2em}
+\setlength{\cftsubsecindent}{5.8em}
+\setlength{\cftsubsecnumwidth}{4.0em}
+
+% --- Running Headers & Footers (fancyhdr) ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\footnotesize\BayesDisplayFont\color{BayesMuted}\nouppercase{\leftmark}}
+\fancyhead[RO]{\footnotesize\BayesDisplayFont\color{BayesMuted}\nouppercase{\rightmark}}
+\fancyfoot[LO,RE]{\scriptsize\BayesDisplayFont\color{BayesMuted}\BookShortTitle}
+\fancyfoot[LE,RO]{\footnotesize\BayesDisplayFont\bfseries\color{BayesTeal}\thepage}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\quad #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{BayesBorder}\leaders\hrule height \headrulewidth\hfill}}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[LO,RE]{\scriptsize\BayesDisplayFont\color{BayesMuted}\BookShortTitle}
+  \fancyfoot[LE,RO]{\footnotesize\BayesDisplayFont\bfseries\color{BayesTeal}\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- Cheatsheet Pages System ---
+\fancypagestyle{cheatsheet}{%
+  \fancyhf{}
+  \fancyhead[LO,RE]{\footnotesize\BayesDisplayFont\color{BayesMuted}\nouppercase{\leftmark}}
+  \fancyfoot[LO,RE]{\scriptsize\BayesDisplayFont\color{BayesMuted}\BookShortTitle}
+  \fancyfoot[LE,RO]{\footnotesize\BayesDisplayFont\bfseries\color{BayesTeal}\thepage}
+  \renewcommand{\headrulewidth}{0.45pt}
+  \renewcommand{\headrule}{\hbox to\headwidth{\color{BayesTeal!45}\leaders\hrule height \headrulewidth\hfill}}
+}
+
+\newif\ifCheatSheetPage
+\CheatSheetPagefalse
+
+\newcommand{\CheatSheetPageFrame}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[BayesTeal!55,line width=0.55pt,rounded corners=2pt]
+      ([xshift=0.28in,yshift=-0.28in]current page.north west)
+      rectangle
+      ([xshift=-0.28in,yshift=0.28in]current page.south east);
+  \end{tikzpicture}%
+}
+
+\AddToShipoutPictureFG{%
+  \ifCheatSheetPage
+    \CheatSheetPageFrame
+  \fi
+}
+
+\newenvironment{cheatsheetpages}{%
+  \clearpage
+  \global\CheatSheetPagetrue
+  \pagestyle{cheatsheet}%
+  \thispagestyle{cheatsheet}%
+  \setcounter{table}{0}%
+  \renewcommand{\thetable}{\arabic{table}}%
+  \renewcommand{\theHtable}{cheatsheet.\thechapter.\arabic{table}}%
+  \setcounter{equation}{0}%
+  \renewcommand{\theequation}{S\arabic{equation}}%
+  \renewcommand{\theHequation}{cheatsheet.\thechapter.\arabic{equation}}%
+  \captionsetup[table]{%
+    name=Quick Table,
+    labelfont={bf,sf,color=BayesTeal},
+    textfont={color=BayesInk},
+    skip=5pt
+  }%
+  \titleformat{name=\section,numberless}[display]
+    {\needspace{5\baselineskip}\normalfont\BayesDisplayFont\bfseries\Large\color{BayesInk}}
+    {}{0pt}{}
+    [\vspace{3pt}{\color{BayesTeal!60}\titlerule[0.7pt]}]%
+  \titlespacing*{name=\section,numberless}{0pt}{2pt}{8pt}%
+  \titleformat{name=\subsection,numberless}
+    {\needspace{3\baselineskip}\normalfont\BayesDisplayFont\bfseries\normalsize\color{BayesTeal}}
+    {}{0pt}{}%
+  \titlespacing*{name=\subsection,numberless}{0pt}{8pt plus 2pt minus 1pt}{3pt}%
+  \arrayrulecolor{BayesTeal!42}%
+  \renewcommand{\arraystretch}{1.06}%
+  \setlength{\tabcolsep}{3.8pt}%
+}{%
+  \clearpage
+  \global\CheatSheetPagefalse
+  \pagestyle{fancy}%
+  \arrayrulecolor{BayesBorder}%
+}
+
+\newcommand{\cheatsheettitle}[2]{%
+  \twocolumn[{%
+    \phantomsection
+    \addcontentsline{toc}{section}{#2}%
+    \vspace*{-2pt}%
+    {\normalfont\BayesDisplayFont\bfseries\Large\color{BayesInk}\raggedright #1\par}%
+    \vspace{3pt}{\color{BayesTeal!60}\hrule height 0.7pt}%
+    \vspace{8pt}%
+  }]%
+}
+
+% --- Callout Box Engine (thermalbox / bayesbox) ---
+\newcommand{\boxtitle}[3]{%
+  \makebox[1.55em][c]{#2}\textsc{#1}\quad\textnormal{#3}%
+}
+
+\tcbset{
+  bayesbox/.style={
+    enhanced,
+    breakable,
+    boxrule=0.55pt,
+    arc=1.5pt,
+    outer arc=1.5pt,
+    left=6pt,
+    right=6pt,
+    top=4pt,
+    bottom=4pt,
+    before skip=6pt plus 1pt minus 1pt,
+    after skip=6pt plus 1pt minus 1pt,
+    fontupper=\small,
+    fonttitle=\BayesDisplayFont\bfseries\small,
+    colback=white,
+    colframe=BayesInk,
+    colbacktitle=BayesCanvas,
+    coltitle=BayesInk,
+    toptitle=2.5pt,
+    bottomtitle=2.5pt,
+    lefttitle=5pt,
+    righttitle=5pt
+  }
+}
+
+% Reusable functional environments matching thermal_engg_interviews
+\newtcolorbox{intuitionbox}[1][Concept]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesTeal},
+  title={\boxtitle{Concept}{\(\triangleright\)}{#1}},
+  title after break={\boxtitle{Concept}{\(\triangleright\)}{#1 (continued)}}}
+
+\newtcolorbox{interviewbox}[1][Interview Question]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesDeepTeal},
+  title={\boxtitle{Interview}{?}{#1}},
+  title after break={\boxtitle{Interview}{?}{#1 (continued)}}}
+
+\newtcolorbox{assumptionbox}[1][Assumptions]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesBrown},
+  title={\boxtitle{Assumption}{A}{#1}},
+  title after break={\boxtitle{Assumption}{A}{#1 (continued)}}}
+
+\newtcolorbox{groundrealitybox}[1][Hardware / Production Reality]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesMuted},
+  title={\boxtitle{Production}{H}{#1}},
+  title after break={\boxtitle{Production}{H}{#1 (continued)}}}
+
+\newtcolorbox{mistakebox}[1][Common Mistake]{
+  bayesbox,
+  borderline west={1.8pt}{0pt}{BayesAmber},
+  title={\boxtitle{Pitfall}{!}{#1}},
+  title after break={\boxtitle{Pitfall}{!}{#1 (continued)}}}
+
+\newtcolorbox{shortcutbox}[1][Useful Shortcut]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesTeal},
+  title={\boxtitle{Method}{\(\checkmark\)}{#1}},
+  title after break={\boxtitle{Method}{\(\checkmark\)}{#1 (continued)}}}
+
+\newtcolorbox{variantbox}[1][Variants and Edge Cases]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesBlue},
+  title={\boxtitle{Variant}{\(\leftrightarrow\)}{#1}},
+  title after break={\boxtitle{Variant}{\(\leftrightarrow\)}{#1 (continued)}}}
+
+\newtcolorbox[auto counter,number within=chapter]{numericalexample}[1]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesPlum},
+  title={\boxtitle{Example}{\#}{\thetcbcounter: #1}},
+  title after break={\boxtitle{Example}{\#}{\thetcbcounter: #1 (continued)}}}
+
+\newtcolorbox{designreviewbox}[1][Design Review]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesDeepTeal},
+  title={\boxtitle{Review}{D}{#1}},
+  title after break={\boxtitle{Review}{D}{#1 (continued)}}}
+
+\newtcolorbox{rcabox}[1][Root-Cause Analysis]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesBrown},
+  title={\boxtitle{RCA}{\(\therefore\)}{#1}},
+  title after break={\boxtitle{RCA}{\(\therefore\)}{#1 (continued)}}}
+
+\newtcolorbox{validationbox}[1][Validation]{
+  bayesbox,
+  borderline west={1.5pt}{0pt}{BayesGreen},
+  title={\boxtitle{Evidence}{E}{#1}},
+  title after break={\boxtitle{Evidence}{E}{#1 (continued)}}}
+
+\newcommand{\chapterpurpose}[1]{%
+  \begin{tcolorbox}[
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=BayesBorder,
+    borderline west={2.5pt}{0pt}{BayesTeal},
+    colbacktitle=BayesPale,
+    coltitle=BayesInk,
+    boxrule=0.55pt,
+    arc=1.5pt,
+    left=6pt,right=6pt,top=5pt,bottom=5pt,
+    before skip=2pt,after skip=10pt,
+    fontupper=\small]
+  {\BayesDisplayFont\bfseries\color{BayesTeal}Chapter Aim.}\enspace\rmfamily #1
+  \end{tcolorbox}%
+}
+
+\newcommand{\physicalmeaning}[1]{%
+  \par\smallskip\noindent\textbf{Operational Meaning.}\enspace#1\par\smallskip}
+
+\newcommand{\sourcesnote}[1]{%
+  \par\smallskip\noindent{\footnotesize\textit{Source note.}\enspace#1}\par\smallskip}
+
+% Backward-compatible academic callouts
+\newtcolorbox{DefinitionBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesBlue},
+  title={\boxtitle{Definition}{D}{#2}},
+  #1
+}
+
+\newtcolorbox{InsightBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesTeal},
+  title={\boxtitle{Insight}{\(\triangleright\)}{#2}},
+  #1
+}
+
+\newtcolorbox{ExampleBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesPlum},
+  title={\boxtitle{Example}{\#}{#2}},
+  #1
+}
+
+\newtcolorbox{WarningBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesAmber},
+  title={\boxtitle{Caution}{!}{#2}},
+  #1
+}
+\let\CautionBox\WarningBox
+
+\newtcolorbox{SummaryBox}[2][]{
+  bayesbox,
+  colback=BayesPale,
+  borderline west={2.2pt}{0pt}{BayesTeal},
+  title={\boxtitle{Summary}{\(\checkmark\)}{#2}},
+  #1
+}
+\let\TakeawayBox\SummaryBox
+
+\newtcolorbox{ExerciseBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesDeepTeal},
+  title={\boxtitle{Exercise}{?}{#2}},
+  #1
+}
+
+\newtcolorbox{ProofBox}[2][]{
+  bayesbox,
+  borderline west={2.2pt}{0pt}{BayesDark},
+  title={\boxtitle{Proof}{\(\therefore\)}{#2}},
+  #1
+}
+
+% Chapter Opener compatibility macro
+\newcommand{\BayesChapterOpenerContent}[4]{%
+  \BayesCaptureAssetRoot
+  \begin{minipage}{\linewidth}
+    \vspace*{0.15cm}
+    {\raggedright
+      \begin{tikzpicture}
+        \node[fill=BayesDark,rounded corners=2.0pt,inner xsep=8pt,inner ysep=3.5pt] {
+          {\BayesDisplayFont\bfseries\color{BayesPale}\small CHAPTER #1}
+        };
+      \end{tikzpicture}
+      \par\vspace{0.30cm}
+      {\BayesDisplayFont\fontsize{22}{25}\selectfont\bfseries\color{BayesInk}#2\par}
+      \vspace{0.18cm}
+      {\large\color{BayesSecondary}#3\par}
+      \vspace{0.30cm}
+      {\color{BayesTeal}\rule{2.2cm}{1.8pt}}\textcolor{BayesBorder}{\rule{\dimexpr\linewidth-2.2cm\relax}{0.4pt}}\par\vspace{0.35cm}
+    }
+    \ifstrempty{#4}{}{%
+      \chapterpurpose{#4}%
+    }
+  \end{minipage}
+}
+
+\newcommand{\ChapterOpener}[4]{%
+  \refstepcounter{chapter}%
+  \chaptermark{#2}%
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#2}%
+  \if@twocolumn
+    \clearpage
+    \twocolumn[{%
+      \BayesChapterOpenerContent{#1}{#2}{#3}{#4}%
+      \vspace{1.0em}%
+    }]%
+  \else
+    \clearpage
+    \BayesChapterOpenerContent{#1}{#2}{#3}{#4}%
+    \vspace{1.0em}%
+  \fi
+  \markboth{\thechapter\quad #2}{\thechapter\quad #2}%
+}
+
+% --- Math, Table & Code Macros ---
+\providecommand{\dd}{\mathop{}\!\mathrm{d}}
+\providecommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\pdtwo}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+
+\newcommand{\BookEquation}[1]{%
+  \begin{center}%
+    \begin{tcolorbox}[arc=1.5pt,boxrule=0.45pt,colback=BayesPale,colframe=BayesBorder,width=.95\linewidth]%
+      \centering\large\(\displaystyle #1\)%
+    \end{tcolorbox}%
+  \end{center}%
+}
+
+\NewEnviron{BookTable}[1]{%
+  \renewcommand{\arraystretch}{1.15}\small%
+  \rowcolors{2}{BayesPale!50!white}{white}%
+  \begin{tabularx}{\linewidth}{#1}\BODY\end{tabularx}%
+}
+\newcommand{\BookTableHeader}{\rowcolor{BayesDeepTeal}}
+\newcommand{\BookTableHead}[1]{\color{white}\bfseries #1}
+
+% Code Listings
+\makeatletter
+\lst@Key{numbers}{none}{%
+  \def\lst@PlaceNumber{\lst@linebgrd}%
+  \lstKV@SwitchCases{#1}{%
+    none:\\%
+    left:\def\lst@PlaceNumber{\llap{\normalfont\lst@numberstyle{\thelstnumber}\kern\lst@numbersep}\lst@linebgrd}\\%
+    right:\def\lst@PlaceNumber{\rlap{\normalfont\kern\linewidth\kern\lst@numbersep\lst@numberstyle{\thelstnumber}}\lst@linebgrd}%
+  }{\PackageError{Listings}{Numbers #1 unknown}\@ehc}}%
+\lst@Key{linebackgroundcolor}{}{\def\lst@linebgrdcolor{#1}}
+\lst@Key{linebackgroundsep}{0pt}{\def\lst@linebgrdsep{#1}}
+\lst@Key{linebackgroundwidth}{\linewidth}{\def\lst@linebgrdwidth{#1}}
+\lst@Key{linebackgroundheight}{\ht\strutbox}{\def\lst@linebgrdheight{#1}}
+\lst@Key{linebackgrounddepth}{\dp\strutbox}{\def\lst@linebgrddepth{#1}}
+\lst@Key{linebackgroundcmd}{\color@block}{\def\lst@linebgrdcmd{#1}}
+\newcommand{\lst@linebgrd}{\ifx\lst@linebgrdcolor\empty\else\rlap{\lst@basicstyle\color{-.}\lst@linebgrdcolor{\kern-\dimexpr\lst@linebgrdsep\relax\lst@linebgrdcmd{\lst@linebgrdwidth}{\lst@linebgrdheight}{\lst@linebgrddepth}}}\fi}
+\makeatother
+
+\lstdefinelanguage{JSON}{morestring=[b]",morecomment=[l]{//},morekeywords={true,false,null}}
+\lstdefinelanguage{YAML}{sensitive=false,morecomment=[l]{\#},morestring=[b]",morekeywords={true,false,yes,no,null}}
+
+\lstdefinestyle{BayesBookCode}{%
+  backgroundcolor=\color{BayesCode},basicstyle=\ttfamily\scriptsize\color{BayesInk},
+  commentstyle=\color{BayesMuted}\itshape,keywordstyle=\bfseries\color{BayesTeal},stringstyle=\color{BayesPlum},
+  frame=single,framerule=0.35pt,rulecolor=\color{BayesBorder},framesep=4pt,
+  breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2,
+  numbers=left,numberstyle=\tiny\color{BayesMuted},numbersep=6pt,linebackgroundcolor={\BayesNotesLineBackground}}
+
+\newcommand{\BayesNotesHighlightedLines}{}
+\makeatletter
+\newcommand{\BayesNotesLineBackground}{\color{BayesCode}\def\BayesNotesLineMatch{0}\@for\BayesNotesCandidate:=\BayesNotesHighlightedLines\do{\ifnum\value{lstnumber}=\BayesNotesCandidate\relax\def\BayesNotesLineMatch{1}\fi}\ifnum\BayesNotesLineMatch=1\color{BayesCodeHighlight}\fi}
+\makeatother
+
+\lstnewenvironment{CodeBlock}[2][]{\lstset{style=BayesBookCode,language=#2,#1}}{}
+\lstnewenvironment{HighlightedCodeBlock}[3][]{\gdef\BayesNotesHighlightedLines{#3}\lstset{style=BayesBookCode,language=#2,#1}}{\gdef\BayesNotesHighlightedLines{}}
+\newcommand{\InlineCode}[1]{{\ttfamily\small\color{BayesTeal}#1}}
+
+% Diagrams and plots
+\tikzset{
+  bayes/node/.style={rounded corners=1.8pt,draw=BayesBorder,fill=BayesSurface,very thick,minimum width=2.0cm,minimum height=.70cm,align=center,font=\small\bfseries\color{BayesInk}},
+  bayes/data/.style={bayes/node,fill=BayesPale,draw=BayesTeal!42!BayesPale},
+  bayes/model/.style={bayes/node,fill=BayesBlue!7!white,draw=BayesBlue!38!white},
+  bayes/flow/.style={-{Latex[length=1.8mm]},very thick,draw=BayesSecondary},
+  bayes/accent/.style={rounded corners=1.2mm,fill=BayesTeal,text=white,font=\scriptsize\bfseries,inner xsep=2.2mm,inner ysep=1.2mm},
+  bayes/measurement/.style={-{Latex[length=1.5mm]}-{Latex[length=1.5mm]},draw=BayesTeal,very thick}
+}
+
+\pgfplotsset{bayes/science plot/.style={
+  axis line style={draw=BayesSecondary},tick style={draw=BayesSecondary},
+  tick label style={font=\scriptsize,color=BayesSecondary},label style={font=\scriptsize,color=BayesSecondary},
+  grid=major,grid style={draw=BayesBorder,line width=.25pt},legend style={font=\scriptsize,draw=none,fill=none},
+  every axis plot/.append style={very thick},width=.95\linewidth,height=.38\textheight
+}}
+
+% Content pending helper
+\newcommand{\ContentPendingChapter}[1]{%
+  \begin{WarningBox}{Academic Content Development}
+    #1
+  \end{WarningBox}
+  \begin{tcolorbox}[enhanced,arc=1.5pt,boxrule=0.45pt,colback=BayesPale,colframe=BayesBorder,title={Author Guidelines}]
+    \small
+    \begin{itemize}
+      \item Expand this orientation chapter with rigorous narrative exposition, mathematical foundations, and worked case studies.
+      \item Structure topics into clear sub-sections with formal definitions, theorems, and practical insights.
+      \item Add comprehensive practice problems, cheatsheets, and references.
+    \end{itemize}
+  \end{tcolorbox}
+}
+
+% --- Frontmatter & Backmatter Components ---
+\newcommand{\BayesBookCover}{%
+  \begin{titlepage}
+  \thispagestyle{empty}
+  \color{BayesInk}
+  \vspace*{15mm}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[BayesPale] ([xshift=-40mm,yshift=-24mm]current page.north east)
+      circle[radius=32mm];
+    \draw[BayesBorder,line width=0.55pt]
+      ([xshift=-62mm,yshift=-25mm]current page.north east) --
+      ([xshift=-16mm,yshift=-70mm]current page.north east);
+    \fill[BayesTeal] ([xshift=-31mm,yshift=-36mm]current page.north east)
+      circle[radius=2.0mm];
+  \end{tikzpicture}
+
+  {\BayesDisplayFont\bfseries\footnotesize\color{BayesTeal}\MakeUppercase{\BookType}\par}
+  \vspace{8mm}
+  {\color{BayesTeal}\rule{24mm}{1.4pt}\par}
+
+  \vspace{22mm}
+  \begin{minipage}{0.92\textwidth}
+    \raggedright
+    {\BayesDisplayFont\bfseries\fontsize{36}{42}\selectfont\color{BayesInk}\BookTitle\par}
+    \vspace{8mm}
+    {\BayesDisplayFont\fontsize{14}{20}\selectfont\color{BayesSecondary}\BookSubtitle\par}
+  \end{minipage}
+
+  \vfill
+  \begin{center}
+    {\color{BayesBorder}\rule{0.75\textwidth}{0.6pt}\par}
+    \vspace{7mm}
+    {\BayesDisplayFont\bfseries\fontsize{18}{22}\selectfont\color{BayesInk}\BookAuthors\par}
+    \vspace{3mm}
+    {\scriptsize\color{BayesMuted}Published by BayesStack \textbullet\ Learning OS for Higher-Ed Institutions\par}
+  \end{center}
+  \vspace{16mm}
+  \end{titlepage}
+}
+\let\makebookcover\BayesBookCover
+
+\newcommand{\BayesOpeningPage}{%
+  \cleardoublepage
+  \thispagestyle{empty}
+  \vspace*{0.24\textheight}
+  \begin{center}
+    {\BayesDisplayFont\bfseries\fontsize{28}{34}\selectfont\color{BayesInk}\BookTitle\par}
+    \vspace{7mm}
+    {\BayesDisplayFont\fontsize{12}{18}\selectfont\color{BayesSecondary}\BookSubtitle\par}
+    \vspace{16mm}
+    {\color{BayesTeal}\rule{28mm}{1.2pt}\par}
+    \vfill
+    {\BayesDisplayFont\bfseries\fontsize{12}{16}\selectfont\color{BayesInk}\BookAuthors\par}
+  \end{center}
+  \vspace*{16mm}
+  \clearpage
+}
+
+\newcommand{\BayesCopyrightPage}{%
+  \clearpage
+  \thispagestyle{empty}
+  \null
+  \vfill
+  \begin{minipage}{0.80\textwidth}
+    {\BayesDisplayFont\bfseries\color{BayesInk}\BookTitle\par}
+    \vspace{2mm}
+    {\small\color{BayesSecondary}\BookSubtitle\par}
+    \vspace{8mm}
+    {\small
+      Copyright \textcopyright{} 2026 \BookAuthor. All rights reserved.
+      \vspace{3mm}
+
+      No part of this publication may be reproduced, stored in a retrieval system, or
+      transmitted in any form or by any means without prior written permission from the
+      publishers, except for brief quotations in critical reviews or scholarly articles.
+      \vspace{3mm}
+
+      This volume is an official instructional reference prepared for institutional
+      tenants on the BayesStack Learning OS platform. Computational workflows and implementations
+      should be verified against production requirements.
+      \vspace{3mm}
+
+      First Edition, 2026.
+      \vspace{3mm}
+
+      ISBN-13: \BookISBN
+    }
+    \vspace{8mm}
+    {\footnotesize\color{BayesMuted}
+      Interior typography and publication design prepared in \LaTeX{} using the BayesStack Notes Publishing Infrastructure.
+    }
+  \end{minipage}
+  \vspace*{12mm}
+  \clearpage
+}
+
+\newcommand{\BayesBackCover}{%
+  \clearpage
+  \thispagestyle{empty}
+  \color{BayesInk}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[BayesPale] ([xshift=38mm,yshift=24mm]current page.south west)
+      circle[radius=32mm];
+    \draw[BayesBorder,line width=0.55pt]
+      ([xshift=18mm,yshift=64mm]current page.south west) --
+      ([xshift=70mm,yshift=16mm]current page.south west);
+    \fill[BayesTeal] ([xshift=50mm,yshift=36mm]current page.south west)
+      circle[radius=1.8mm];
+  \end{tikzpicture}
+
+  \vspace*{22mm}
+  {\BayesDisplayFont\bfseries\footnotesize\color{BayesTeal}\MakeUppercase{\BookType}\par}
+  \vspace{7mm}
+  {\color{BayesTeal}\rule{24mm}{1.2pt}\par}
+  \vspace{18mm}
+
+  \begin{minipage}{0.84\textwidth}
+    {\BayesDisplayFont\bfseries\fontsize{20}{25}\selectfont\color{BayesInk}\BookTitle\par}
+    \vspace{8mm}
+    {\fontsize{10.5}{15}\selectfont\color{BayesInk}
+      \BookSubtitle
+    \par}
+    \vspace{6mm}
+    {\fontsize{10.5}{15}\selectfont\color{BayesSecondary}
+      Prepared as a rigorous academic and professional reference, this book bridges
+      first-principles mathematical foundations, analytical derivations, computational
+      algorithms, and industry-scale applications.
+    \par}
+  \end{minipage}
+
+  \vfill
+  \begin{minipage}{0.70\textwidth}
+    {\BayesDisplayFont\bfseries\fontsize{11}{14}\selectfont\color{BayesTeal}
+      Target Audience: \BookAudience\par}
+  \end{minipage}
+  \vspace{12mm}
+
+  \begin{minipage}[b]{0.60\textwidth}
+    {\BayesDisplayFont\bfseries\fontsize{12}{15}\selectfont\color{BayesInk}\BookAuthors\par}
+    \vspace{3mm}
+    {\footnotesize\color{BayesMuted}ISBN-13: \BookISBN\par}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.35\textwidth}\raggedleft
+    \BayesStackWordmark\\[1mm]
+    {\scriptsize\color{BayesMuted}BayesStack Publishing}
+  \end{minipage}
+  \vspace*{16mm}
+  \clearpage
+}
+
+% --- Empty Verso Page Cleanup (cleardoublepage) ---
+\makeatletter
+\renewcommand{\cleardoublepage}{%
+  \clearpage
+  \if@twoside
+    \ifodd\c@page\else
+      \hbox{}\thispagestyle{empty}\newpage
+      \if@twocolumn
+        \hbox{}\thispagestyle{empty}\newpage
+      \fi
+    \fi
+  \fi
+}
+\makeatother
+
+% Cross references
+\crefname{chapter}{chapter}{chapters}
+\Crefname{chapter}{Chapter}{Chapters}
+\crefname{section}{section}{sections}
+\Crefname{section}{Section}{Sections}
+\crefname{equation}{equation}{equations}
+\Crefname{equation}{Equation}{Equations}
+\crefname{figure}{figure}{figures}
+\Crefname{figure}{Figure}{Figures}
+\crefname{table}{table}{tables}
+\Crefname{table}{Table}{Tables}
+
+\endinput
